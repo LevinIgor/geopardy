@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+
+body{
+    margin: 0;
+    background-color: var(--main);
+    font-family: 'Roboto', sans-serif;
+    overflow: hidden;
+}
+
+:root {
+    --main:#ffffff;
+    --color-form-secondary:#415a66;
+    --color-form-main:#f5f5f5;
+    --color-table:#f5f5f5;
+  }
