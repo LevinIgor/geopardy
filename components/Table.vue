@@ -4,10 +4,10 @@
       <span class="heading">{{ item.head }}</span>
       <span
         class="cell"
-        @click="showQuestion(cell)"
+        @click="showQuestion(cell);"
         v-for="cell in item.body"
-        :key="cell.scope"
-        >{{ cell.scope }}</span
+        :key="cell.score"
+        >{{ cell.score }}</span
       >
     </div>
   </div>
@@ -24,49 +24,49 @@ export default {
             head: "Head 1",
             body: [
               {
-                scope: 100,
+                score: 100,
                 text: "text for 1 head",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 200,
+                score: 200,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 300,
+                score: 300,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 400,
+                score: 400,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 500,
+                score: 500,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 600,
+                score: 600,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 700,
+                score: 700,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 800,
+                score: 800,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
@@ -77,49 +77,49 @@ export default {
             head: "Head 2",
             body: [
               {
-                scope: 100,
+                score: 100,
                 text: "text for 1 head",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 200,
+                score: 200,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 300,
+                score: 300,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 400,
+                score: 400,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 500,
+                score: 500,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 600,
+                score: 600,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 700,
+                score: 700,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 800,
+                score: 800,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
@@ -130,49 +130,49 @@ export default {
             head: "Head 3",
             body: [
               {
-                scope: 100,
+                score: 100,
                 text: "text for 1 head",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 200,
+                score: 200,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 300,
+                score: 300,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 400,
+                score: 400,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 500,
+                score: 500,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 600,
+                score: 600,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 700,
+                score: 700,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 800,
+                score: 800,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
@@ -183,49 +183,49 @@ export default {
             head: "Head 4",
             body: [
               {
-                scope: 100,
+                score: 100,
                 text: "text for 1 head",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 200,
+                score: 200,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 300,
+                score: 300,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 400,
+                score: 400,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 500,
+                score: 500,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 600,
+                score: 600,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 700,
+                score: 700,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 800,
+                score: 800,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
@@ -236,49 +236,49 @@ export default {
             head: "Head 5",
             body: [
               {
-                scope: 100,
+                score: 100,
                 text: "text for 1 head",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 200,
+                score: 200,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 300,
+                score: 300,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 400,
+                score: 400,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 500,
+                score: 500,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 600,
+                score: 600,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 700,
+                score: 700,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 800,
+                score: 800,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
@@ -289,49 +289,49 @@ export default {
             head: "Head 6",
             body: [
               {
-                scope: 100,
+                score: 100,
                 text: "text for 1 head",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 200,
+                score: 200,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 300,
+                score: 300,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 400,
+                score: 400,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 500,
+                score: 500,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 600,
+                score: 600,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 700,
+                score: 700,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
               },
               {
-                scope: 800,
+                score: 800,
                 text: "lkldsfj dslk jdsklfjdskl jfkljds",
                 isActive: true,
                 answer: "answer text",
@@ -354,7 +354,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scored>
 span {
   font-size: 24px;
   cursor: pointer;
@@ -372,5 +372,11 @@ span {
   justify-content: space-between;
   padding: 10px;
   margin-top: 10px;
+}
+.cell{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: blanchedalmond;
 }
 </style>

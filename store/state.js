@@ -1,8 +1,6 @@
 export default () => ({
     name: 'store',
-    activeWindows: {
-        table:true
-    },
+    activeScene:'table',
     commands:[],
     question:null,
     commandNames:["Звездёныши", "Команды", "Помощь", "Выход"],

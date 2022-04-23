@@ -73,6 +73,7 @@ export default {
         {
           img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmChM1Ra6xJMtkYLBMPgllFPyCg63L2yanjw&usqp=CAU",
           name: "",
+          score: 0
         },
       ],
     };
@@ -88,6 +89,7 @@ export default {
       this.commands.push({
         img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmChM1Ra6xJMtkYLBMPgllFPyCg63L2yanjw&usqp=CAU",
         name: "",
+        score:0
       });
     },
     // удаление команды
