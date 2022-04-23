@@ -10,5 +10,8 @@ export default {
   },
   SET_QUESTION(state, question){
     state.question = question;
+  },
+  SET_COMMANDS(state, commands){
+    state.commands = commands;
   }
 };

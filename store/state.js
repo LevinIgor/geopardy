@@ -4,5 +4,6 @@ export default () => ({
         table:true
     },
     commands:[],
-    question:null
+    question:null,
+    commandNames:["Звездёныши", "Команды", "Помощь", "Выход"],
     })
