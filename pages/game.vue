@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <div class="scenes">
-      <Table />
-      <!-- <Question /> -->
+      <Table v-if="$store.state.activeWindows.table" />
+      <Question v-else />
     </div>
     <div class="commands">
       <div class="command">
