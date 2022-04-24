@@ -17,7 +17,7 @@
 export default {
   methods: {
     showQuestion(cell, key, key2) {
-      if (cell.isActive) {
+      if (cell.score !== 0) {
         this.$store.commit("SET_QUESTION", cell);
         this.$store.commit("SHOW_QUESTION");
         this.$store.commit("SET_ZERO_VALUE", {key: key,key2: key2});
@@ -32,7 +32,7 @@ export default {
 };
 </script>
 
-<style scored>
+<style scoped>
 span {
   font-size: 24px;
   cursor: pointer;
