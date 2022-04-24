@@ -1,26 +1,32 @@
 export default {
   // This mutation is used to set the state of the store
-  SHOW_QUESTION(state){
-    state.activeScene = 'question';
-    
+  SHOW_QUESTION(state) {
+    state.activeScene = "question";
   },
-  SHOW_TABLE(state){
-    state.activeScene = 'table';
-    
+  SHOW_TABLE(state) {
+    state.activeScene = "table";
   },
-  SHOW_ANSWER(state){
-    state.activeScene = 'answer';
+  SHOW_ANSWER(state) {
+    state.activeScene = "answer";
   },
-  SET_QUESTION(state, question){
+  SET_QUESTION(state, question) {
     state.question = question;
   },
-  SET_COMMANDS(state, commands){
+  SET_COMMANDS(state, commands) {
     state.commands = commands;
   },
-  CORRECT(state, payload){
-    state.commands[payload.key].score = state.commands[payload.key].score + payload.value
+  SET_ZERO_VALUE(state, index) {
+    state.table[index.key].body.splice(index.key2, 1, {
+      score: 0,
+      isActive: false,
+    });
   },
-  INCORRECT(state,payload){
-    state.commands[payload.key].score = state.commands[payload.key].score - payload.value
-  }
+  CORRECT(state, payload) {
+    state.commands[payload.key].score =
+      state.commands[payload.key].score + payload.value;
+  },
+  INCORRECT(state, payload) {
+    state.commands[payload.key].score =
+      state.commands[payload.key].score - payload.value;
+  },
 };

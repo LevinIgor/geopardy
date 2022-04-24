@@ -9,7 +9,7 @@
         <option>Oranges</option>
       </select>
       <div class="buttons">
-        <button class="btn">Добавить</button>
+        <button class="btn" @click="$router.push('/create')">Добавить</button>
         <button class="btn">Редактировать</button>
         <button class="btn">Удалить</button>
       </div>

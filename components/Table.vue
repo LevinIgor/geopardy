@@ -1,12 +1,12 @@
 <template>
   <div class="table">
-    <div class="line" v-for="item in table" :key="item.head">
+    <div class="line" v-for="(item, key) in table" :key="item.head">
       <span class="heading">{{ item.head }}</span>
       <span
         class="cell"
-        @click="showQuestion(cell);"
-        v-for="cell in item.body"
-        :key="cell.score"
+        @click="showQuestion(cell, key, key2)"
+        v-for="(cell, key2) in item.body"
+        :key="key2"
         >{{ cell.score }}</span
       >
     </div>
@@ -15,340 +15,18 @@
 
 <script>
 export default {
-  props: {
-    table: {
-      type: Array,
-      default() {
-        return [
-          {
-            head: "Head 1",
-            body: [
-              {
-                score: 100,
-                text: "text for 1 head",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 200,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 300,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 400,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 500,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 600,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 700,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 800,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-            ],
-          },
-          {
-            head: "Head 2",
-            body: [
-              {
-                score: 100,
-                text: "text for 1 head",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 200,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 300,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 400,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 500,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 600,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 700,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 800,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-            ],
-          },
-          {
-            head: "Head 3",
-            body: [
-              {
-                score: 100,
-                text: "text for 1 head",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 200,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 300,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 400,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 500,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 600,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 700,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 800,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-            ],
-          },
-          {
-            head: "Head 4",
-            body: [
-              {
-                score: 100,
-                text: "text for 1 head",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 200,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 300,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 400,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 500,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 600,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 700,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 800,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-            ],
-          },
-          {
-            head: "Head 5",
-            body: [
-              {
-                score: 100,
-                text: "text for 1 head",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 200,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 300,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 400,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 500,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 600,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 700,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 800,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-            ],
-          },
-          {
-            head: "Head 6",
-            body: [
-              {
-                score: 100,
-                text: "text for 1 head",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 200,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 300,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 400,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 500,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 600,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 700,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-              {
-                score: 800,
-                text: "lkldsfj dslk jdsklfjdskl jfkljds",
-                isActive: true,
-                answer: "answer text",
-              },
-            ],
-          },
-        ];
-      },
-    },
-  },
-
   methods: {
-    showQuestion(cell) {
+    showQuestion(cell, key, key2) {
       if (cell.isActive) {
         this.$store.commit("SET_QUESTION", cell);
         this.$store.commit("SHOW_QUESTION");
+        this.$store.commit("SET_ZERO_VALUE", {key: key,key2: key2});
       }
+    },
+  },
+  computed: {
+    table() {
+      return this.$store.state.table;
     },
   },
 };
@@ -373,7 +51,7 @@ span {
   padding: 10px;
   margin-top: 10px;
 }
-.cell{
+.cell {
   display: flex;
   justify-content: center;
   align-items: center;
