@@ -41,12 +41,12 @@ export default {
   width: 100%;
   font-size: 44px;
   text-align: center;
+  padding-top: 10px;
 }
 .table {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: var(--color-table);
   width: 100%;
   height: 100%;
 }
@@ -55,19 +55,29 @@ export default {
   justify-content: space-between;
   height: 100%;
   padding: 10px;
-  margin-top: 10px;
 }
 .cell {
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  font-size: 24px;
+  border-radius: 5px;
+  transition: .15s;
+  font-size: 28px;
+  font-weight: 600;
   width: 100%;
+  margin-left: 10px;
   
 }
+.cell:hover{
+  background-color: rgba(0, 0, 0, 0.198);
+}
 .heading{
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
+
   font-size: 28px;
   min-width: 20%;
 }

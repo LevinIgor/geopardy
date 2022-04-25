@@ -3,15 +3,35 @@
 
 body{
     margin: 0;
-    background-color: var(--main);
+    /* background: rgb(0,100,102);
+    background: linear-gradient(45deg, rgba(0,100,102,1) 36%, rgba(83,27,83,1) 100%); */
+    background: linear-gradient(-45deg, #f72585, #7209b7, #3f37c9, #4cc9f0);
+	background-size: 400% 400%;
+	animation: gradient 15s ease infinite;
+    color:var(--color-main-font) ;
     font-family: 'Roboto', sans-serif;
     overflow: hidden;
     user-select: none;
 }
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
 
 :root {
-    --main:#ffffff;
-    --color-form-main:#f5f5f5;
-    --color-form-secondary:#415a66;
-    --color-background-table:#0ec5f3d2;
+    --main:#006466;
+    --color-main-font:white;
+    --color-form-main:#adadad;
+    --color-form-secondary:#A1B57D;
+    --color-background-table:#212f45b2;
+    --color-background-cell-hover:#2f3c4f;
+    
   }

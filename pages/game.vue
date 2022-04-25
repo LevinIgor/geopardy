@@ -1,67 +1,75 @@
 <template>
-<div class="game">
-   <div class="popup" v-if="isPopup" @click="isPopup=false"></div>
-   <div class="container">
-    <div class="scenes">
+  <div class="game">
+    <div class="popup" v-if="isPopup" @click="isPopup = false"></div>
+    <div class="container">
+      <div class="scenes">
+        <transition name="fade">
+          <Table v-if="$store.state.activeScene == 'table'" />
+        </transition>
+       
+          <div
+            class="question text"
+            v-if="$store.state.activeScene == 'question'"
+            @click="$store.commit('SHOW_ANSWER')"
+          >
+            {{ question.question }}
+          </div>
+        
 
-      <Table v-if="$store.state.activeScene == 'table'" />
-
-      <div class="question text" v-if="$store.state.activeScene == 'question'" @click="$store.commit('SHOW_ANSWER')">
-        {{ question.question }}
-      </div>
-
-      <div class="answer text" v-if="$store.state.activeScene == 'answer'" @click="$store.commit('SHOW_TABLE')">
-        {{ question.answer }}
-      </div>
-    </div>
-    <div class="commands">
-      <div
-        class="command"
-        v-for="(command, key) in $store.state.commands"
-        :key="key"
-        :class="{'active': activeKey == key }"
-      >
-      <div class="img">
-        <img :src="command.img" alt="" @click="getAnswer(key)" />
-        <div class="answer-control" v-if="isPopup"  >
-          <button class="yes" @click="correct(key)" >yes</button>
-          <button class="no" @click="incorrect(key)">no</button>
+        <div
+          class="answer text"
+          v-if="$store.state.activeScene == 'answer'"
+          @click="$store.commit('SHOW_TABLE')"
+        >
+          {{ question.answer }}
         </div>
       </div>
-        <span>{{ command.name }}</span>
-        <span>{{ command.score }}</span>
+      <div class="commands">
+        <div
+          class="command"
+          v-for="(command, key) in $store.state.commands"
+          :key="key"
+          :class="{ active: activeKey == key }"
+        >
+          <div class="img">
+            <img :src="command.img" alt="" @click="getAnswer(key)" />
+            <div class="answer-control" v-if="isPopup">
+              <button class="yes" @click="correct(key)">Правильно</button>
+              <button class="no" @click="incorrect(key)">Не правильно</button>
+            </div>
+          </div>
+          <span>{{ command.name }}</span>
+          <span>{{ command.score }}</span>
+        </div>
       </div>
     </div>
   </div>
-</div>
- 
 </template>
 
 <script>
 export default {
   data() {
     return {
-      activeKey:'',
+      activeKey: "",
       isPopup: false,
     };
   },
   methods: {
     getAnswer(key) {
-      if (this.$store.state.activeScene == 'question') {
+      if (this.$store.state.activeScene == "question") {
         this.activeKey = key;
-        this.isPopup = true
+        this.isPopup = true;
       }
     },
     correct(key) {
-      this.$store.commit('CORRECT', {key:key,value:this.question.score});
+      this.$store.commit("CORRECT", { key: key, value: this.question.score });
       this.isPopup = false;
-      this.$store.commit('SHOW_ANSWER');
-     
+      this.$store.commit("SHOW_ANSWER");
     },
     incorrect(key) {
-      this.$store.commit('INCORRECT', {key:key,value:this.question.score});
+      this.$store.commit("INCORRECT", { key: key, value: this.question.score });
       this.isPopup = false;
-    }
+    },
   },
   computed: {
     question() {
@@ -72,20 +80,28 @@ export default {
 </script>
 
 <style scoped>
+.fade-enter-active {
+  transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
 span {
   text-align: center;
   font-size: 24px;
 }
-button{
+button {
   width: 100px;
-  height: 30px;
   border: 1px solid #000;
   border-radius: 5px;
   margin: 10px;
   font-size: 16px;
+  padding: 10px;
+  height: 60px;
   cursor: pointer;
 }
-.game{
+.game {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -93,29 +109,26 @@ button{
   width: 100%;
   height: 100vh;
 }
-.popup{
+.popup {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   z-index: 10;
 }
 .container {
-  background-color: var(--color-form-main);
   box-sizing: border-box;
-  width: 90%;
-  height: 90%;
-
+  overflow: hidden;
+  width: 95%;
+  height: 95%;
 }
 .scenes {
-  background-color: aliceblue;
   box-sizing: border-box;
-  height: 70%;
-  padding-bottom: 50px;
+  height: 65%;
 }
-.text{
+.text {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -128,35 +141,53 @@ button{
   flex-wrap: wrap;
   justify-content: space-around;
   box-sizing: border-box;
-  margin-bottom: 20px;
-  height: 30%;
+  padding-bottom: 20px;
+  height: 35%;
 }
 .command {
   display: flex;
   flex-direction: column;
-  background-color: antiquewhite;
+  justify-content: space-around;
+  background-color: #ffffff5d;
+  backdrop-filter: blur(12px);
   cursor: pointer;
+  border-radius: 10px;
   padding: 10px;
 }
-.active{
+.command img {
+  width: 100%;
+  object-fit: cover;
+}
+.active {
   z-index: 11;
 }
-.active .answer-control{
+.active .answer-control {
   opacity: 1;
 }
-.img{
+.img {
   position: relative;
 }
-.answer-control{
+.answer-control {
   position: absolute;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  background-color: var(--color-form-secondary);
+  background-color: #3e1f47;
   opacity: 0;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+}
+.yes {
+  background-color: #347450;
+  color: rgb(255, 255, 255);
+}
+.no {
+  background-color: rgb(131, 54, 54);
+  color: #ffffff;
+}
+button:hover {
+  background-color: #3e1f47;
 }
 </style>

@@ -1,6 +1,7 @@
 <template>
   <div class="container">
-    <div class="variant-selector">
+    <div class="start">
+      <div class="variant-selector">
       <select class="select-css" v-model="selectScenario">
         <option
           v-for="scenario in scenarios"
@@ -64,6 +65,8 @@
       </div>
     </div>
     <button class="run" @click="gotoGamePage()">Начать</button>
+    </div>
+    
   </div>
 </template>
 
@@ -146,23 +149,44 @@ svg {
 .container {
   position: absolute;
   display: flex;
-  flex-direction: column;
-  background-color: var(--color-form-main);
-  min-width: 600px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(-45deg, #f72585, #7209b7, #3f37c9, #4cc9f0);
+	background-size: 400% 400%;
+	animation: gradient 15s ease infinite;
+  width: 100%;
+  height: 100vh;
+}
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+.start{
+  background-color: #ffffff5d;
+  min-width: 50%;
+  min-height: 40%;
+  max-width: 80%;
+  backdrop-filter: blur(12px);
+  border-radius: 10px;
+  overflow: hidden;
 }
 .variant-selector {
   display: flex;
   justify-content: space-between;
-  background-color: var(--color-form-secondary);
+  background-color: rgba(0, 0, 0, 0.431);
   padding: 10px;
 }
 .commands {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 .command {
   position: relative;
