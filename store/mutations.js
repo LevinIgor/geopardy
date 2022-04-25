@@ -15,8 +15,11 @@ export default {
   SET_COMMANDS(state, commands) {
     state.commands = commands;
   },
+  SET_SCENARIO(state, scenario) {
+    state.selectScenario = scenario;
+  },
   SET_ZERO_VALUE(state, index) {
-    state.table[index.key].body.splice(index.key2, 1, {
+    state.selectScenario.table[index.key].body.splice(index.key2, 1, {
       score: 0,
       isActive: false,
     });

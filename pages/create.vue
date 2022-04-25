@@ -24,7 +24,7 @@
       <button @click="save">Save</button>
     </div>
     <div class="table">
-      <span class="head-table">{{scenario.name}}</span>
+      <span class="head-table">{{ scenario.name }}</span>
       <div class="line" v-for="(line, key) in scenario.table" :key="key">
         <input
           type="text"
@@ -100,52 +100,7 @@
 export default {
   data() {
     return {
-      scenario: {
-        name: "",
-        table: [
-          {
-            head: "Heading 1",
-            id:'',
-            body: [
-              { question: "", answer: "", score: 100 },
-              { question: "", answer: "", score: 100 },
-              { question: "", answer: "", score: 100 },
-              { question: "", answer: "", score: 100 },
-              { question: "", answer: "", score: 100 },
-            ],
-          },
-          {
-            head: "Heading 2",
-            body: [
-              { question: "", answer: "", score: 100 },
-              { question: "", answer: "", score: 100 },
-              { question: "", answer: "", score: 100 },
-              { question: "", answer: "", score: 100 },
-              { question: "", answer: "", score: 100 },
-            ],
-          },
-          {
-            head: "Heading 3",
-            body: [
-              { question: "", answer: "", score: 100 },
-              { question: "", answer: "", score: 100 },
-              { question: "", answer: "", score: 100 },
-              { question: "", answer: "", score: 100 },
-              { question: "", answer: "", score: 100 },
-            ],
-          },
-          {
-            head: "Heading 4",
-            body: [
-              { question: "", answer: "", score: 100 },
-              { question: "", answer: "", score: 100 },
-              { question: "", answer: "", score: 100 },
-              { question: "", answer: "", score: 100 },
-              { question: "", answer: "", score: 100 },
-            ],
-          },
-        ],
-      },
+      scenario: {},
       isSetCell: false,
       selectedCell: {},
       table: { rows: 5, cols: 8, name: "" },
@@ -230,14 +185,14 @@ export default {
       }
     },
     save() {
-      var id = Date.now()
-      this.scenario.id = id
-      this.$fire.firestore.collection("scenarios").doc(id.toString()).set(this.scenario);
+      var id = Date.now();
+      this.scenario.id = id;
+      this.$fire.firestore
+        .collection("scenarios")
+        .doc(id.toString())
+        .set(this.scenario);
     },
   },
-  //   mounted() {
-  //     this.$fire.firestore.collection("scenarios").doc().set({ name: "Вася" });
-  //   },
 };
 </script>
 
@@ -278,7 +233,7 @@ export default {
   width: 2em;
   font-size: 20px;
 }
-.head-table{
+.head-table {
   font-size: 44px;
   text-align: center;
 }
@@ -303,6 +258,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  height: 100%;
 }
 .head {
   min-width: 300px;

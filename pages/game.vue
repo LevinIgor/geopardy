@@ -7,7 +7,7 @@
       <Table v-if="$store.state.activeScene == 'table'" />
 
       <div class="question text" v-if="$store.state.activeScene == 'question'" @click="$store.commit('SHOW_ANSWER')">
-        {{ question.text }}
+        {{ question.question }}
       </div>
 
       <div class="answer text" v-if="$store.state.activeScene == 'answer'" @click="$store.commit('SHOW_TABLE')">
@@ -19,7 +19,6 @@
         class="command"
         v-for="(command, key) in $store.state.commands"
         :key="key"
-        
         :class="{'active': activeKey == key }"
       >
       <div class="img">

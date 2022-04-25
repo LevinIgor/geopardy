@@ -1,13 +1,16 @@
 <template>
   <div class="table">
-    <div class="line" v-for="(item, key) in table" :key="item.head">
+    <span class="head">
+      {{ scenario.name }}
+    </span>
+    <div class="line" v-for="(item, key) in scenario.table" :key="item.head">
       <span class="heading">{{ item.head }}</span>
-      <span
+      <div
         class="cell"
-        @click="showQuestion(cell, key, key2)"
         v-for="(cell, key2) in item.body"
-        :key="key2"
-        >{{ cell.score }}</span
+        @click="showQuestion(cell, key, key2)"
+        :key=" key+key2"
+        >{{ cell.score }}</div
       >
     </div>
   </div>
@@ -20,22 +23,24 @@ export default {
       if (cell.score !== 0) {
         this.$store.commit("SET_QUESTION", cell);
         this.$store.commit("SHOW_QUESTION");
-        this.$store.commit("SET_ZERO_VALUE", {key: key,key2: key2});
+        this.$store.commit("SET_ZERO_VALUE", { key: key, key2: key2 });
       }
     },
   },
   computed: {
-    table() {
-      return this.$store.state.table;
+    scenario() {
+  
+      return this.$store.state.selectScenario;
     },
   },
 };
 </script>
 
 <style scoped>
-span {
-  font-size: 24px;
-  cursor: pointer;
+.head{
+  width: 100%;
+  font-size: 44px;
+  text-align: center;
 }
 .table {
   display: flex;
@@ -48,6 +53,7 @@ span {
 .line {
   display: flex;
   justify-content: space-between;
+  height: 100%;
   padding: 10px;
   margin-top: 10px;
 }
@@ -55,6 +61,14 @@ span {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: blanchedalmond;
+  cursor: pointer;
+  font-size: 24px;
+  width: 100%;
+  
+}
+.heading{
+  text-align: center;
+  font-size: 28px;
+  min-width: 20%;
 }
 </style>

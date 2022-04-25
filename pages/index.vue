@@ -1,12 +1,14 @@
 <template>
   <div class="container">
     <div class="variant-selector">
-      <select class="select-css">
-        <option>This is a native select element</option>
-        <option>Apples</option>
-        <option>Bananas</option>
-        <option>Grapes</option>
-        <option>Oranges</option>
+      <select class="select-css" v-model="selectScenario">
+        <option
+          v-for="scenario in scenarios"
+          :key="scenario.id"
+          :value="scenario"
+        >
+          {{ scenario.name }}
+        </option>
       </select>
       <div class="buttons">
         <button class="btn" @click="$router.push('/create')">Добавить</button>
@@ -66,6 +68,7 @@
 </template>
 
 <script>
+import { collection, getDocs } from "firebase/firestore";
 export default {
   data() {
     return {
@@ -73,23 +76,26 @@ export default {
         {
           img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmChM1Ra6xJMtkYLBMPgllFPyCg63L2yanjw&usqp=CAU",
           name: "",
-          score: 0
+          score: 0,
         },
       ],
+      scenarios: [{ name: "1" }],
+      selectScenario:null
     };
   },
   methods: {
     // переход на страницу игры
     gotoGamePage() {
       this.$store.commit("SET_COMMANDS", this.commands);
+      this.$store.commit("SET_SCENARIO", this.selectScenario);
       this.$router.push("/game");
-      }, 
+    },
     // добавление команды
     addCommand() {
       this.commands.push({
         img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmChM1Ra6xJMtkYLBMPgllFPyCg63L2yanjw&usqp=CAU",
         name: "",
-        score:0
+        score: 0,
       });
     },
     // удаление команды
@@ -108,6 +114,18 @@ export default {
       var rand = Math.floor(Math.random() * max);
       return this.$store.state.commandNames[rand];
     },
+  },
+  async mounted() {
+    this.scenarios = [];
+    const querySnapshot = await getDocs(
+      collection(this.$fire.firestore, "scenarios")
+    );
+    querySnapshot.forEach((doc) => {
+      this.scenarios.push(doc.data());
+    });
+    if(this.scenarios.length>0){
+      this.selectScenario=this.scenarios[0];
+    }
   },
 };
 </script>
