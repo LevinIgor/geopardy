@@ -21,8 +21,10 @@
       <label> Name</label>
       <input type="text" v-model="table.name" />
       <button @click="createTable()">OK</button>
+      <button @click="save">Save</button>
     </div>
     <div class="table">
+      <span class="head-table">{{scenario.name}}</span>
       <div class="line" v-for="(line, key) in scenario.table" :key="key">
         <input
           type="text"
@@ -103,6 +105,7 @@ export default {
         table: [
           {
             head: "Heading 1",
+            id:'',
             body: [
               { question: "", answer: "", score: 100 },
               { question: "", answer: "", score: 100 },
@@ -214,16 +217,22 @@ export default {
       }
     },
     createTable() {
-        console.log(this.scenario);
-      this.scenario = {name:this.table.name, table:[]};
+      if (this.table.name.length > 0) {
+        this.scenario = { name: this.table.name, table: [] };
 
-      for (let I = 0; I < this.table.rows; I++) {
-        var body = [];
-        for (let i = 0; i < this.table.cols; i++) {
-          body.push({ question: "", answer: "", score: 100 });
+        for (let I = 0; I < this.table.rows; I++) {
+          var body = [];
+          for (let i = 0; i < this.table.cols; i++) {
+            body.push({ question: "", answer: "", score: 100 });
+          }
+          this.scenario.table.push({ head: "", body: body });
         }
-        this.scenario.table.push({ head: "", body: body });
       }
+    },
+    save() {
+      var id = Date.now()
+      this.scenario.id = id
+      this.$fire.firestore.collection("scenarios").doc(id.toString()).set(this.scenario);
     },
   },
   //   mounted() {
@@ -268,6 +277,10 @@ export default {
 .i-control {
   width: 2em;
   font-size: 20px;
+}
+.head-table{
+  font-size: 44px;
+  text-align: center;
 }
 .form {
   display: flex;
