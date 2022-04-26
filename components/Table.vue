@@ -29,7 +29,6 @@ export default {
   },
   computed: {
     scenario() {
-  
       return this.$store.state.selectScenario;
     },
   },

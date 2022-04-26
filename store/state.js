@@ -325,4 +325,5 @@ export default () => ({
     },
   ],
   selectScenario:{},
+  scenarios:[],
 });

@@ -18,6 +18,12 @@ export default {
   SET_SCENARIO(state, scenario) {
     state.selectScenario = scenario;
   },
+  SET_SCENARIOS(state, scenarios) {
+    scenarios.length > 0
+      ? (state.selectScenario = scenarios[0])
+      : (state.selectScenario = null);
+    state.scenarios = scenarios;
+  },
   SET_ZERO_VALUE(state, index) {
     state.selectScenario.table[index.key].body.splice(index.key2, 1, {
       score: 0,
@@ -31,5 +37,13 @@ export default {
   INCORRECT(state, payload) {
     state.commands[payload.key].score =
       state.commands[payload.key].score - payload.value;
+  },
+  DELETE_SCENARIO(state) {
+    state.scenarios = state.scenarios.filter((sc) => {
+      return sc.id != state.selectScenario.id;
+    });
+    state.scenarios.length > 0
+      ? (state.selectScenario = state.scenarios[0])
+      : (state.selectScenario = null);
   },
 };
