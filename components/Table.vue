@@ -1,8 +1,5 @@
 <template>
   <div class="table">
-    <span class="head">
-      {{ scenario.name }}
-    </span>
     <div class="line" v-for="(item, key) in scenario.table" :key="item.head">
       <span class="heading">{{ item.head }}</span>
       <div

@@ -196,8 +196,15 @@ svg {
   border-radius: 10px;
   overflow: hidden;
 }
+.select-css{
+  outline: none;
+  font-size: 24px;
+  min-width: 25%;
+
+}
 .variant-selector {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   background-color: rgba(0, 0, 0, 0.431);
   padding: 10px;

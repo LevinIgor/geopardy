@@ -40,15 +40,6 @@
       </div>
     </div>
     <div class="control">
-         <select class="select-css" v-model="selectScenario">
-        <option
-          v-for="scenario in scenarios"
-          :key="scenario.id"
-          :value="scenario"
-        >
-          {{ scenario.name }}
-        </option>
-      </select>
       <button @click="clearAll()">Clear all</button>
       <button @click="save()">Save</button>
     </div>
@@ -70,7 +61,6 @@
 </template>
 
 <script>
-import { collection, getDocs } from "firebase/firestore";
 export default {
     
   data() {
@@ -146,24 +136,15 @@ export default {
       this.scenario.name=""
      this.$forceUpdate()
     },
+    async save(){
+      this.$fire.firestore.collection('scenarios').doc(this.scenario.id.toString()).update(this.scenario)
+    }
   },
 
   computed: {
     scenario() {
       return JSON.parse(JSON.stringify(this.$store.state.selectScenario));
     },
-  },
-  async mounted() {
-    this.scenarios = [];
-    const querySnapshot = await getDocs(
-      collection(this.$fire.firestore, "scenarios")
-    );
-    querySnapshot.forEach((doc) => {
-      this.scenarios.push(doc.data());
-    });
-    if(this.scenarios.length>0){
-      this.selectScenario=this.scenarios[0];
-    }
   },
 };
 </script>
