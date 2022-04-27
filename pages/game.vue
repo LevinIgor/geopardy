@@ -30,9 +30,10 @@
           v-for="(command, key) in $store.state.commands"
           :key="key"
           :class="{ active: activeKey == key }"
+           @click="getAnswer(key)"
         >
           <div class="img">
-            <img :src="command.img" alt="" @click="getAnswer(key)" />
+            <img :src="command.img" alt="" />
             <div class="answer-control" v-if="isPopup">
               <button class="yes" @click="correct(key)">Правильно</button>
               <button class="no" @click="incorrect(key)">Не правильно</button>

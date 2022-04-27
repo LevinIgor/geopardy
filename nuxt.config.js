@@ -18,7 +18,9 @@ export default {
   css: ["../geopardy/static/css/main.css"],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: [
+  '~/plugins/vueSelect.js'
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
