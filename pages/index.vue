@@ -26,7 +26,7 @@
           </div>
           <div class="btn">
             <img class="icon" src="../static/icons/editor.png" alt="" />
-            <span class="editor" @click="gotoEditPage()"
+            <span class="editor" @click="$router.push('/editor')"
               >Редактор сценариев</span
             >
           </div>

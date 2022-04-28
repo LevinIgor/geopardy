@@ -1,0 +1,396 @@
+<template>
+  <div class="editor">
+    <div class="popup" v-if="isSetCell" @click.self="isSetCell = false">
+      <div class="form">
+        <span class="head"
+          >{{ selectScenario.table[selectedCell.key].head }}||
+          {{ selectedCell.key2 + 1 }} из
+          {{ selectScenario.table[selectedCell.key].body.length }}</span
+        >
+        <textarea
+          cols="90"
+          rows="10"
+          class="inputs"
+          ref="tArea1"
+          v-model="
+            selectScenario.table[selectedCell.key].body[selectedCell.key2]
+              .question
+          "
+          @keydown="blur('tArea1')"
+          @keypress.enter="nextArea()"
+          @keypress.enter.prevent=""
+        />
+        <textarea
+          cols="90"
+          rows="10"
+          ref="tArea2"
+          class="inputs"
+          v-model="
+            selectScenario.table[selectedCell.key].body[selectedCell.key2]
+              .answer
+          "
+          @keydown="blur('tArea2')"
+          @keypress.enter="nextQuestion()"
+          @keypress.enter.prevent=""
+        />
+        <input
+          type="number"
+          class="score inputs"
+          placeholder="score"
+          v-model="
+            selectScenario.table[selectedCell.key].body[selectedCell.key2].score
+          "
+        />
+        <div class="control-cell">
+          <button @click="prevQuestion()">Prev</button>
+          <button @click="clear()">Clear</button>
+          <button @click="nextQuestion()">Next</button>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="header">
+        <div class="ctrl-panel">
+          <span> Сценарий:</span>
+          <select class="select-css" v-model="selectScenario">
+            <option
+              v-for="scenario in scenarios"
+              :key="scenario.id"
+              :value="scenario"
+            >
+              {{ scenario.name }}
+            </option>
+          </select>
+          <span class="btn clear" @click="clearAll()">Очистить</span>
+          <span class="btn delete" @click="deleteScenarios()"> Удалить</span>
+        </div>
+
+        <div class="ctrl-panel">
+          <input type="range" v-model="tableRows" max="10" min="2" />
+          <span>Рядков:{{ tableRows }} </span>
+          <input type="range" v-model="tableCols" max="10" min="4" />
+          <span>Столбцов:{{ tableCols }}</span>
+
+          <span class="btn add" @click="addScenarios()">Создать</span>
+        </div>
+
+        <span class="btn done" @click="save()">Готово</span>
+      </div>
+      <div class="table">
+        <input
+          type="text"
+          class="table-heading input"
+          v-model="selectScenario.name"
+          placeholder="Название"
+          maxlength="30"
+        />
+        <div
+          class="line"
+          v-for="(line, key) in selectScenario.table"
+          :key="key"
+        >
+          <input
+            type="text"
+            class="table-head input"
+            v-model="line.head"
+            placeholder="Категория"
+          />
+          <div
+            class="body"
+            v-for="(cell, key2) in line.body"
+            :key="key2"
+            @click="openQuestion(key, key2)"
+          >
+            {{ cell.score }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
+export default {
+  data() {
+    return {
+      selectScenario: "",
+      isSetCell: false,
+      selectedCell: {},
+      tableRows: 5,
+      tableCols: 6,
+      scenarios: [],
+      updateList: [],
+      deleteList: [],
+    };
+  },
+  methods: {
+    openQuestion(key, key2) {
+      this.selectedCell = {
+        key: key,
+        key2: key2,
+      };
+      this.isSetCell = true;
+      this.$nextTick().then(() => {
+        this.$refs.tArea1.focus();
+      });
+    },
+    blur(ref) {
+      console.log(ref);
+      this.$refs[ref].blur();
+    },
+    nextQuestion() {
+      var key = this.selectedCell.key;
+      var key2 = this.selectedCell.key2;
+
+      if (key2 < this.selectScenario.table[key].body.length - 1) {
+        this.selectedCell.key2++;
+        this.selectScenario.table[this.selectedCell.key].body[
+          this.selectedCell.key2
+        ].score = this.selectScenario.table[key].body[key2].score + 200;
+      } else {
+        this.selectedCell.key2 = 0;
+        if (key < this.selectScenario.table.length - 1) {
+          this.selectedCell.key++;
+        }
+      }
+      this.$refs.tArea1.focus();
+    },
+    prevQuestion() {
+      var key = this.selectedCell.key;
+      var key2 = this.selectedCell.key2;
+
+      if (key2 > 0) {
+        this.selectedCell.key2--;
+      } else {
+        this.selectedCell.key2 = this.selectScenario.table[key].body.length - 1;
+        if (key > 0) {
+          this.selectedCell.key--;
+        }
+      }
+    },
+    clear() {
+      this.selectScenario.table[this.selectedCell.key].body[
+        this.selectedCell.key2
+      ].question = "";
+      this.selectScenario.table[this.selectedCell.key].body[
+        this.selectedCell.key2
+      ].answer = "";
+      this.selectScenario.table[this.selectedCell.key].body[
+        this.selectedCell.key2
+      ].score = 100;
+    },
+    clearAll() {
+      this.selectScenario.table.forEach((line) => {
+        line.head = "";
+        line.body.forEach((cell) => {
+          cell.question = "";
+          cell.answer = "";
+          cell.score = 100;
+        });
+      });
+      this.selectScenario.name = "";
+      this.$forceUpdate();
+    },
+    deleteScenarios() {
+      this.scenarios = this.scenarios.filter((scenarios) => {
+        return scenarios.id != this.selectScenario.id;
+      });
+      this.deleteList.push(this.selectScenario.id);
+      this.scenarios.length > 0
+        ? (this.selectScenario = this.scenarios[0])
+        : (this.selectScenario = { name: "", table: [] });
+    },
+    addScenarios() {
+      var _scenarios = { id: Date.now(), name: "", table: [] };
+      for (var i = 0; i < this.tableRows; i++) {
+        var line = { name: "", body: [] };
+        for (var j = 0; j < this.tableCols; j++) {
+          line.body.push({ question: "", answer: "", score: 100 });
+        }
+        _scenarios.table.push(line);
+      }
+      this.selectScenario = _scenarios;
+      _scenarios.name = "Новый сценарий";
+      this.scenarios.push(_scenarios);
+    },
+    nextArea() {
+      this.$refs.tArea2.focus();
+    },
+    async save() {
+      var _update = [...new Set(this.updateList)];
+      _update = _update.filter((id) => {
+        if (this.deleteList.indexOf(id) == -1) return id;
+      });
+      this.scenarios.forEach((scenario) => {
+        if (_update.indexOf(scenario.id) != -1) {
+          this.$fire.firestore
+            .collection("scenarios")
+            .doc(scenario.id.toString())
+            .set(scenario);
+        }
+      });
+      this.deleteList.forEach((id) => {
+        this.$fire.firestore
+          .collection("scenarios")
+          .doc(id.toString())
+          .delete();
+      });
+    },
+  },
+  async mounted() {
+    var _scenarios = [];
+    const querySnapshot = await getDocs(
+      collection(this.$fire.firestore, "scenarios")
+    );
+    querySnapshot.forEach((doc) => {
+      _scenarios.push(doc.data());
+    });
+    var stringify = JSON.stringify(_scenarios);
+    this.scenarios = JSON.parse(stringify);
+  },
+  watch: {
+    selectScenario() {
+      this.updateList.push(this.selectScenario.id);
+    },
+  },
+};
+</script>
+
+<style scoped>
+/* Main prop */
+select {
+  background-color: initial;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  font-size: inherit;
+}
+.icon {
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+}
+
+.input {
+  background-color: initial;
+  outline: none;
+  border: none;
+  color: inherit;
+  text-align: center;
+  font-size: 28px;
+}
+/* end Main prop */
+
+/* Containers */
+.editor {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(-45deg, #f72585, #7209b7, #3f37c9, #4cc9f0);
+  background-size: 400% 400%;
+}
+.popup {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+}
+/* end Containers */
+
+/* Main form */
+.container {
+  overflow: hidden;
+  background-color: #ffffffaf;
+  width: 90%;
+  height: 90%;
+  border-radius: 10px;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 5%;
+  font-size: var(--font-size-average);
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.431);
+}
+.ctrl-panel {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #ffffff2f;
+  margin-right: 20px;
+  border-radius: 10px;
+}
+.btn {
+  cursor: pointer;
+  margin-left: 20px;
+}
+.clear:hover {
+  color: #5650cf;
+}
+.delete:hover {
+  color: #f72585;
+}
+.add:hover {
+  color: #f3f62e;
+}
+.done:hover {
+  color: #3bdb0a;
+}
+
+/* end Main form */
+
+/* TABLE */
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #4cc9f0;
+  padding: 30px;
+}
+.table {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  background-color: var(--color-background-table);
+  width: 100%;
+  height: 95%;
+}
+.line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+.body {
+  width: 100%;
+  font-size: var(--font-size-big);
+  cursor: pointer;
+  text-align: center;
+}
+/* end Table */
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+</style>

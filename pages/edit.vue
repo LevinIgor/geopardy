@@ -39,10 +39,6 @@
         </div>
       </div>
     </div>
-    <div class="control">
-      <button @click="clearAll()">Clear all</button>
-      <button @click="save()">Save</button>
-    </div>
     <div class="table ">
       <input type="text" class="inputs" v-model="scenario.name" placeholder="Название">
       <div class="line" v-for="(line, key) in scenario.table" :key="key">
@@ -162,19 +158,19 @@ export default {
   width: 100%;
   height: 100vh;
 }
-.popup {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  top: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  width: 100%;
-  height: 100%;
-}
+  .popup {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+  }
 .control {
   display: flex;
   align-items: center;
