@@ -197,8 +197,15 @@ input {
 }
 .select-css {
   outline: none;
+  background-color: initial;
+  border: none;
+  color: inherit;
+  cursor: pointer;
   font-size: 24px;
   min-width: 25%;
+}
+option{
+  background-color: #6f6e8386;
 }
 .variant-selector {
   display: flex;

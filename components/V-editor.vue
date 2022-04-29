@@ -50,7 +50,6 @@
         </div>
       </div>
     </div>
-    
 
     <div class="container">
       <div class="header">
@@ -78,7 +77,9 @@
           <span class="btn add" @click="addScenarios()">Создать</span>
         </div>
 
-        <span class="btn done" @click="$router.push('/')">Назад</span>
+        <span class="btn done" @click="$store.commit('OPEN_VIEW', 'V-menu')"
+          >Назад</span
+        >
       </div>
       <div class="table">
         <input
@@ -123,11 +124,8 @@ export default {
       selectedCell: {},
       tableRows: 5,
       tableCols: 6,
-      scenarios: [],
       updateList: [],
-      deleteList: [],
-    
-     
+      scenarios: [],
     };
   },
   methods: {
@@ -142,7 +140,6 @@ export default {
       });
     },
     blur(ref) {
-      console.log(ref);
       this.$refs[ref].blur();
     },
     nextQuestion() {
@@ -199,10 +196,19 @@ export default {
       this.$forceUpdate();
     },
     deleteScenarios() {
+      this.$fire.firestore
+        .collection("scenarios")
+        .doc(this.selectScenario.id.toString())
+        .delete();
+
       this.scenarios = this.scenarios.filter((scenarios) => {
         return scenarios.id != this.selectScenario.id;
       });
-      this.deleteList.push(this.selectScenario.id);
+
+      this.updateList = this.updateList.filter((id) => {
+        return id != this.selectScenario.id;
+      });
+
       this.scenarios.length > 0
         ? (this.selectScenario = this.scenarios[0])
         : (this.selectScenario = { name: "", table: [] });
@@ -222,12 +228,19 @@ export default {
     },
     nextArea() {
       this.$refs.tArea2.focus();
+    }
+  },
+  watch: {
+    selectScenario() {
+      this.updateList.push(this.selectScenario.id);
     },
-    async save() {
-      var _update = [...new Set(this.updateList)];
-      _update = _update.filter((id) => {
-        if (this.deleteList.indexOf(id) == -1) return id;
-      });
+  },
+  activated() {
+    this.scenarios = JSON.parse(JSON.stringify(this.$store.state.scenarios));
+  },
+  deactivated() {
+     var _update = [...new Set(this.updateList)];
+
       this.scenarios.forEach((scenario) => {
         if (_update.indexOf(scenario.id) != -1) {
           this.$fire.firestore
@@ -236,35 +249,9 @@ export default {
             .set(scenario);
         }
       });
-      this.deleteList.forEach((id) => {
-        this.$fire.firestore
-          .collection("scenarios")
-          .doc(id.toString())
-          .delete()
-      })
-    
-        
-    },
+
+      this.$store.commit("SET_SCENARIOS", this.scenarios);
   },
-  async mounted() {
-    var _scenarios = [];
-    const querySnapshot = await getDocs(
-      collection(this.$fire.firestore, "scenarios")
-    );
-    querySnapshot.forEach((doc) => {
-      _scenarios.push(doc.data());
-    });
-    var stringify = JSON.stringify(_scenarios);
-    this.scenarios = JSON.parse(stringify);
-  },
-  watch: {
-    selectScenario() {
-      this.updateList.push(this.selectScenario.id);
-    },
-  },
-  destroyed(){
-    this.save()
-  }
 };
 </script>
 
@@ -299,9 +286,7 @@ select {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100vh;
-  background: linear-gradient(-45deg, #f72585, #7209b7, #3f37c9, #4cc9f0);
-  background-size: 400% 400%;
+  height: 100%;
 }
 .popup {
   position: absolute;
@@ -399,7 +384,7 @@ select {
   width: 100%;
   font-size: var(--font-size-big);
 }
-.body:hover{
+.body:hover {
   color: rgba(19, 157, 192, 0.65);
 }
 .control-cell button {
@@ -425,16 +410,4 @@ select {
   color: rgb(24, 21, 19);
 }
 /* end Table */
-
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
 </style>

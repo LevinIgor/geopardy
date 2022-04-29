@@ -15,13 +15,10 @@ export default {
   SET_COMMANDS(state, commands) {
     state.commands = commands;
   },
-  SET_SCENARIO(state, scenario) {
+  CHANGE_SELECT(state, scenario) {
     state.selectScenario = scenario;
   },
   SET_SCENARIOS(state, scenarios) {
-    scenarios.length > 0
-      ? (state.selectScenario = scenarios[0])
-      : (state.selectScenario = null);
     state.scenarios = scenarios;
   },
   SET_ZERO_VALUE(state, index) {
@@ -42,8 +39,28 @@ export default {
     state.scenarios = state.scenarios.filter((sc) => {
       return sc.id != state.selectScenario.id;
     });
-    state.scenarios.length > 0
-      ? (state.selectScenario = state.scenarios[0])
-      : (state.selectScenario = null);
   },
+  UPDATE_COMMAND(state, payload) {
+    state.commands[payload.key].name = payload.name;
+  },
+  OPEN_VIEW(state,view) {
+    state.view = view;
+  },
+  ADD_COMMANDS(state, count) {
+    var commands = [];
+    var max = state.commandNames.length;
+      for (let i = 0; i < count; i++) {
+        var rand = Math.floor(Math.random() * max);
+       commands.push({
+          img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmChM1Ra6xJMtkYLBMPgllFPyCg63L2yanjw&usqp=CAU",
+          name: state.commandNames[rand],
+          score: 0,
+        });
+      }
+    state.commands = commands;
+  },
+  GET_RANDOM_NAME(state){
+    var max = state.commandNames.length;    
+  }
+
 };
