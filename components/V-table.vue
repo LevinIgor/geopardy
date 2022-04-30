@@ -1,6 +1,6 @@
 <template>
   <div class="table">
-    <div class="line" v-for="(item, key) in scenario.table" :key="item.head">
+    <div class="line" v-for="(item, key) in currentProp" :key="item.head">
       <span class="heading">{{ item.head }}</span>
       <div
         class="cell"
@@ -15,20 +15,14 @@
 
 <script>
 export default {
+  props:['currentProp'],
   methods: {
     showQuestion(cell, key, key2) {
       if (cell.score !== 0) {
-        this.$store.commit("SET_QUESTION", cell);
-        this.$store.commit("SHOW_QUESTION");
-        this.$store.commit("SET_ZERO_VALUE", { key: key, key2: key2 });
+        this.$emit('event', {cell, key, key2, type: 'showQuestion'});
       }
     },
-  },
-  computed: {
-    scenario() {
-      return this.$store.state.selectScenario;
-    },
-  },
+  }
 };
 </script>
 
@@ -58,7 +52,7 @@ export default {
   align-items: center;
   cursor: pointer;
   border-radius: 5px;
-  transition: .15s;
+  transition: .2s;
   font-size: 28px;
   font-weight: 600;
   width: 100%;

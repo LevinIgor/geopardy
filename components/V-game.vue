@@ -1,60 +1,36 @@
 <template>
   <div class="game">
-    <div class="popup" v-if="isPopup" @click="isPopup = false"></div>
-    <div class="container">
-      <div class="scenes">
-        <div class="table">
-          <div
-            class="line"
-            v-for="(item, key) in scenario.table"
-            :key="item.head"
-          >
-            <span class="heading">{{ item.head }}</span>
-            <div
-              class="cell"
-              v-for="(cell, key2) in item.body"
-              @click="showQuestion(cell, key, key2)"
-              :key="key + key2"
-            >
-              {{ cell.score }}
-            </div>
+    <span class="back " @click="$store.commit('OPEN_VIEW', 'V-menu')">Назад</span>
+    <div class="scenes">
+      <transition name="component-fade" mode="out-in">
+        <component
+          :is="view"
+          :currentProp="currentProp"
+          @event="event($event)"
+        />
+      </transition>
+    </div>
+    <div class="commands">
+      <div
+        class="command"
+        v-for="(command, key) in commands"
+        :key="key"
+        :class="{ active: activeKey == key }"
+        @click="getAnswer(key)"
+      >
+        <div class="img">
+          <img :src="command.img" alt="" />
+          <div class="answer-control" v-if="isGetAnswer">
+            <button class="yes" @click.stop="controlAnswer(true, key)">
+              Правильно
+            </button>
+            <button class="no" @click.stop="controlAnswer(false, key)">
+              Не правильно
+            </button>
           </div>
         </div>
-
-        <div
-          class="question text"
-          v-if="$store.state.activeScene == 'question'"
-          @click="$store.commit('SHOW_ANSWER')"
-        >
-          {{ question.question }}
-        </div>
-
-        <div
-          class="answer text"
-          v-if="$store.state.activeScene == 'answer'"
-          @click="$store.commit('SHOW_TABLE')"
-        >
-          {{ question.answer }}
-        </div>
-      </div>
-      <div class="commands">
-        <div
-          class="command"
-          v-for="(command, key) in $store.state.commands"
-          :key="key"
-          :class="{ active: activeKey == key }"
-          @click="getAnswer(key)"
-        >
-          <div class="img">
-            <img :src="command.img" alt="" />
-            <div class="answer-control" v-if="isPopup">
-              <button class="yes" @click="correct(key)">Правильно</button>
-              <button class="no" @click="incorrect(key)">Не правильно</button>
-            </div>
-          </div>
-          <span>{{ command.name }}</span>
-          <span>{{ command.score }}</span>
-        </div>
+        <span>{{ command.name }}</span>
+        <span>{{ command.score }}</span>
       </div>
     </div>
   </div>
@@ -65,40 +41,61 @@ export default {
   data() {
     return {
       activeKey: "",
-      isPopup: false,
+      isGetAnswer: false,
+      view: "V-table",
+      currentProp: {},
+      commands: {},
+      scenario: {},
     };
   },
   methods: {
     getAnswer(key) {
-      if (this.$store.state.activeScene == "question") {
+      if (this.view == "V-Q-text") {
         this.activeKey = key;
-        this.isPopup = true;
+        this.isGetAnswer = true;
       }
     },
-    correct(key) {
-      this.$store.commit("CORRECT", { key: key, value: this.question.score });
-      this.isPopup = false;
-      this.$store.commit("SHOW_ANSWER");
+    controlAnswer(isCorrect, index) {
+      this.isGetAnswer = false;
+      isCorrect
+        ? ((this.commands[index].score += this.currentProp.cell.score),
+          this.event({ type: "showAnswer" }))
+        : (this.commands[index].score -= this.currentProp.cell.score);
     },
-    incorrect(key) {
-      this.$store.commit("INCORRECT", { key: key, value: this.question.score });
-      this.isPopup = false;
+    event(event) {
+      if (event.type == "showQuestion") {
+        this.currentProp = event;
+        this.view = "V-Q-text";
+      }
+      if (event.type == "showAnswer") {
+        this.view = "V-A-text";
+      }
+      if (event.type == "showTable") {
+        this.currentProp.cell.score = 0;
+        this.currentProp = this.scenario.table;
+        this.view = "V-table";
+      }
     },
   },
-  computed: {
-    scenario(){
-        return this.$store.state.selectScenario;
-    }
+  activated() {
+    this.scenario = JSON.parse(JSON.stringify(this.$store.state.selectScenario));
+    this.commands = JSON.parse(JSON.stringify(this.$store.state.commands));
+    this.currentProp = this.scenario.table;
   },
 };
 </script>
 
 <style scoped>
-.fade-enter-active {
-  transition: opacity 0.5s;
+.component-fade-enter-active {
+  transition: 0.5s ease;
 }
-.fade-enter,
-.fade-leave-to {
+.component-fade-leave-active {
+  transition: 0.2s;
+}
+.component-fade-enter {
+  opacity: 0;
+}
+.component-fade-leave-to {
   opacity: 0;
 }
 span {
@@ -115,13 +112,18 @@ button {
   height: 60px;
   cursor: pointer;
 }
+.back{
+  position: fixed;
+  cursor: pointer;
+  top: 10px;
+  left: 10px;
+}
+.back:hover{
+  color: rgb(184, 251, 182);
+}
 .game {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100vh;
+  width: 95%;
+  height: 95vh;
 }
 .popup {
   position: fixed;
@@ -132,20 +134,20 @@ button {
   background: rgba(0, 0, 0, 0.5);
   z-index: 10;
 }
-.container {
-  box-sizing: border-box;
-  overflow: hidden;
-  width: 95%;
-  height: 95%;
-}
+
 .scenes {
-  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
   height: 65%;
 }
 .text {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
   width: 100%;
   height: 100%;
   font-size: 44px;
@@ -156,6 +158,7 @@ button {
   justify-content: space-around;
   box-sizing: border-box;
   padding-bottom: 20px;
+  width: 100%;
   height: 35%;
 }
 .command {
@@ -187,6 +190,7 @@ button {
   justify-content: space-around;
   align-items: center;
   background-color: #3e1f47;
+  z-index: 11;
   opacity: 0;
   top: 0;
   left: 0;
@@ -203,49 +207,5 @@ button {
 }
 button:hover {
   background-color: #3e1f47;
-}
-.head{
-  width: 100%;
-  font-size: 44px;
-  text-align: center;
-  padding-top: 10px;
-}
-.table {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 100%;
-  height: 100%;
-}
-.line {
-  display: flex;
-  justify-content: space-between;
-  height: 100%;
-  padding: 10px;
-}
-.cell {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: .15s;
-  font-size: 28px;
-  font-weight: 600;
-  width: 100%;
-  margin-left: 10px;
-  
-}
-.cell:hover{
-  background-color: rgba(0, 0, 0, 0.198);
-}
-.heading{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-
-  font-size: 28px;
-  min-width: 20%;
 }
 </style>

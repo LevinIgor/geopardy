@@ -17,7 +17,7 @@
             selectScenario.table[selectedCell.key].body[selectedCell.key2]
               .question
           "
-          @keydown.esc="blur('tArea1')"
+          @keydown.esc="$refs.tArea1.blur()"
           @keypress.enter="nextArea()"
           @keypress.enter.prevent=""
         />
@@ -31,7 +31,7 @@
             selectScenario.table[selectedCell.key].body[selectedCell.key2]
               .answer
           "
-          @keydown.esc="blur('tArea2')"
+          @keydown.esc="$refs.tArea2.blur()"
           @keypress.enter="nextQuestion()"
           @keypress.enter.prevent=""
         />
@@ -88,6 +88,8 @@
           v-model="selectScenario.name"
           placeholder="Название"
           maxlength="30"
+          ref="iName"
+          @keypress.enter="$refs.iCategory0[0].focus()"
         />
         <div
           class="line"
@@ -99,6 +101,9 @@
             class="table-head input"
             v-model="line.head"
             placeholder="Категория"
+            maxlength="25"
+            :ref="'iCategory' + key"
+            @keypress.enter="nextCategory(key)"
           />
           <div
             class="body"
@@ -139,8 +144,10 @@ export default {
         this.$refs.tArea1.focus();
       });
     },
-    blur(ref) {
-      this.$refs[ref].blur();
+    nextCategory(key) {
+      key + 1 < this.selectScenario.table.length
+        ? this.$refs["iCategory" + (key + 1).toString()][0].focus()
+        : this.openQuestion(0,0)
     },
     nextQuestion() {
       var key = this.selectedCell.key;
@@ -223,12 +230,14 @@ export default {
         _scenarios.table.push(line);
       }
       this.selectScenario = _scenarios;
-      _scenarios.name = "Новый сценарий";
       this.scenarios.push(_scenarios);
+      this.$nextTick(() => {
+        this.$refs.iName.focus();
+      });
     },
     nextArea() {
       this.$refs.tArea2.focus();
-    }
+    },
   },
   watch: {
     selectScenario() {
@@ -239,18 +248,18 @@ export default {
     this.scenarios = JSON.parse(JSON.stringify(this.$store.state.scenarios));
   },
   deactivated() {
-     var _update = [...new Set(this.updateList)];
+    var _update = [...new Set(this.updateList)];
 
-      this.scenarios.forEach((scenario) => {
-        if (_update.indexOf(scenario.id) != -1) {
-          this.$fire.firestore
-            .collection("scenarios")
-            .doc(scenario.id.toString())
-            .set(scenario);
-        }
-      });
+    this.scenarios.forEach((scenario) => {
+      if (_update.indexOf(scenario.id) != -1) {
+        this.$fire.firestore
+          .collection("scenarios")
+          .doc(scenario.id.toString())
+          .set(scenario);
+      }
+    });
 
-      this.$store.commit("SET_SCENARIOS", this.scenarios);
+    this.$store.commit("SET_SCENARIOS", this.scenarios);
   },
 };
 </script>
@@ -258,11 +267,16 @@ export default {
 <style scoped>
 /* Main prop */
 select {
-  background-color: initial;
   outline: none;
+  background-color: initial;
   border: none;
+  color: inherit;
   cursor: pointer;
-  font-size: inherit;
+  font-size: 24px;
+  min-width: 25%;
+}
+option {
+  background-color: #6f6e8386;
 }
 .icon {
   width: 25px;
@@ -306,7 +320,7 @@ select {
 /* Main form */
 .container {
   overflow: hidden;
-  background-color: #ffffffaf;
+  background-color: #ffffff48;
   width: 90%;
   height: 90%;
   border-radius: 10px;
@@ -367,7 +381,6 @@ select {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  background-color: var(--color-background-table);
   width: 100%;
   height: 95%;
 }

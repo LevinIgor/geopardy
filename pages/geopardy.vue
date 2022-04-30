@@ -2,7 +2,7 @@
   <div class="container">
     <transition name="component-fade">
       <keep-alive>
-        <component v-bind:is="view" />
+        <component :is="view" />
       </keep-alive>
     </transition>
   </div>

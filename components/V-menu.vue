@@ -16,20 +16,20 @@
             <span>Кол-во игроков : {{ countCommands }}</span>
             <input
               type="range"
-              min="0"
+              min="2"
               max="6"
               v-model="countCommands"
               @change="addCommand"
             />
           </div>
-          <div class="btn" @click="$store.commit('OPEN_VIEW','V-editor')">
+          <div class="btn" @click="$store.commit('OPEN_VIEW', 'V-editor')">
             <img class="icon" src="../static/icons/editor.png" alt="" />
-            <span class="editor">
-              Редактор сценариев</span
-            >
+            <span class="editor"> Редактор сценариев</span>
           </div>
 
-          <span class="btn run" @click="$store.commit('OPEN_VIEW','V-game')">Начать</span>
+          <span class="btn run" @click="$store.commit('OPEN_VIEW', 'V-game')"
+            >Начать</span
+          >
         </div>
       </div>
       <div class="commands">
@@ -50,7 +50,7 @@ export default {
   data() {
     return {
       select: null,
-      countCommands: 0,
+      countCommands: 2,
     };
   },
   methods: {
@@ -58,21 +58,28 @@ export default {
     addCommand() {
       this.$store.commit("ADD_COMMANDS", this.countCommands);
     },
-    changeSelect(){
-      this.$store.commit("CHANGE_SELECT", this.select);}
+    changeSelect() {
+      this.$store.commit("CHANGE_SELECT", this.select);
+    },
   },
   computed: {
     scenarios() {
+      this.$store.state.scenarios.length > 0
+        ? (this.select = this.$store.state.scenarios[0],
+          this.$store.commit("CHANGE_SELECT", this.select))
+        : (this.select = { name: "not found" });
       return this.$store.state.scenarios;
     },
     commands() {
       return this.$store.state.commands;
     },
   },
+  mounted() {
+    this.$store.commit("ADD_COMMANDS", this.countCommands);
+  },
 };
 </script>
 <style scoped>
-
 .icon {
   cursor: pointer;
   width: 25px;
