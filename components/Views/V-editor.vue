@@ -18,7 +18,7 @@
               .question
           "
           @keydown.esc="$refs.tArea1.blur()"
-          @keypress.enter="nextArea()"
+          @keypress.enter="$refs.tArea2.focus()"
           @keypress.enter.prevent=""
         />
         <textarea
@@ -51,68 +51,67 @@
       </div>
     </div>
 
-    <div class="container">
-      <div class="header">
-        <div class="ctrl-panel">
-          <span> Сценарий:</span>
-          <select class="select-css" v-model="selectScenario">
-            <option
-              v-for="scenario in scenarios"
-              :key="scenario.id"
-              :value="scenario"
-            >
-              {{ scenario.name }}
-            </option>
-          </select>
-          <span class="btn clear" @click="clearAll()">Очистить</span>
-          <span class="btn delete" @click="deleteScenarios()"> Удалить</span>
-        </div>
-
-        <div class="ctrl-panel">
-          <input type="range" v-model="tableRows" max="10" min="2" />
-          <span>Рядков:{{ tableRows }} </span>
-          <input type="range" v-model="tableCols" max="10" min="4" />
-          <span>Столбцов:{{ tableCols }}</span>
-
-          <span class="btn add" @click="addScenarios()">Создать</span>
-        </div>
-
-        <span class="btn done" @click="$store.commit('OPEN_VIEW', 'V-menu')"
-          >Назад</span
-        >
+    <div class="header">
+      <div class="panel">
+        <span> Сценарий:</span>
+        <select class="select-css" v-model="selectScenario">
+          <option
+            v-for="scenario in scenarios"
+            :key="scenario.id"
+            :value="scenario"
+          >
+            {{ scenario.name }}
+          </option>
+        </select>
+        <span class="btn " @click="clearAll()">Очистить</span>
+        <span class="btn " @click="deleteScenarios()">Удалить</span>
       </div>
-      <div class="table">
+
+      <div class="panel">
+        <input type="range" v-model="tableRows" max="10" min="2" />
+        <span>Рядков:{{ tableRows }} </span>
+        <input type="range" v-model="tableCols" max="10" min="4" />
+        <span>Столбцов:{{ tableCols }}</span>
+
+        <span class="btn " @click="addScenarios()">Создать</span>
+      </div>
+
+      <span
+        class="btn "
+        @click="
+          $store.commit('OPEN_VIEW', 'ViewsV-menu');
+          $store.commit('SET_ANIM_DIRECTION', 'right');
+        "
+        >Назад</span
+      >
+    </div>
+    <div class="table">
+      <input
+        type="text"
+        class="table-heading input"
+        v-model="selectScenario.name"
+        placeholder="Название"
+        maxlength="30"
+        ref="iName"
+        @keypress.enter="$refs.iCategory0[0].focus()"
+      />
+      <div class="line" v-for="(line, key) in selectScenario.table" :key="key">
         <input
           type="text"
-          class="table-heading input"
-          v-model="selectScenario.name"
-          placeholder="Название"
-          maxlength="30"
-          ref="iName"
-          @keypress.enter="$refs.iCategory0[0].focus()"
+          class="table-head input"
+          v-model="line.head"
+          placeholder="Категория"
+          maxlength="25"
+          :ref="'iCategory' + key"
+          @keypress.enter="nextCategory(key)"
         />
         <div
-          class="line"
-          v-for="(line, key) in selectScenario.table"
-          :key="key"
+          class="body"
+          v-for="(cell, key2) in line.body"
+          :key="key2"
+          @click="openQuestion(key, key2)"
         >
-          <input
-            type="text"
-            class="table-head input"
-            v-model="line.head"
-            placeholder="Категория"
-            maxlength="25"
-            :ref="'iCategory' + key"
-            @keypress.enter="nextCategory(key)"
-          />
-          <div
-            class="body"
-            v-for="(cell, key2) in line.body"
-            :key="key2"
-            @click="openQuestion(key, key2)"
-          >
-            {{ cell.score }}
-          </div>
+          {{ cell.score }}
         </div>
       </div>
     </div>
@@ -120,8 +119,8 @@
 </template>
 
 <script>
-import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 export default {
+  name: "V-editor",
   data() {
     return {
       selectScenario: "",
@@ -147,7 +146,7 @@ export default {
     nextCategory(key) {
       key + 1 < this.selectScenario.table.length
         ? this.$refs["iCategory" + (key + 1).toString()][0].focus()
-        : this.openQuestion(0,0)
+        : this.openQuestion(0, 0);
     },
     nextQuestion() {
       var key = this.selectedCell.key;
@@ -235,9 +234,6 @@ export default {
         this.$refs.iName.focus();
       });
     },
-    nextArea() {
-      this.$refs.tArea2.focus();
-    },
   },
   watch: {
     selectScenario() {
@@ -273,18 +269,13 @@ select {
   color: inherit;
   cursor: pointer;
   font-size: 24px;
-  min-width: 25%;
+  min-width: 200px;
 }
 option {
   background-color: #6f6e8386;
 }
-.icon {
-  width: 25px;
-  height: 25px;
-  cursor: pointer;
-}
 
-.input {
+input {
   background-color: initial;
   outline: none;
   border: none;
@@ -292,15 +283,17 @@ option {
   text-align: center;
   font-size: 28px;
 }
-/* end Main prop */
 
-/* Containers */
 .editor {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
+   background-color: #ffffff48;
+   overflow: hidden;
+    border-radius: 10px;
+  width: 95%;
+  height: 95%;
 }
 .popup {
   position: absolute;
@@ -315,53 +308,38 @@ option {
   width: 100%;
   height: 100%;
 }
-/* end Containers */
 
-/* Main form */
-.container {
-  overflow: hidden;
-  background-color: #ffffff48;
-  width: 90%;
-  height: 90%;
-  border-radius: 10px;
-}
+
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 5%;
+  box-sizing: border-box;
+  width: 100%;
+  height: 7%;
   font-size: var(--font-size-average);
   padding: 10px;
   background-color: rgba(0, 0, 0, 0.431);
 }
-.ctrl-panel {
+.panel {
   display: flex;
   align-items: center;
   padding: 10px;
+  height: 30px;
   background-color: #ffffff2f;
-  margin-right: 20px;
   border-radius: 10px;
 }
 .btn {
   cursor: pointer;
   margin-left: 20px;
+  transition: .2s;
 }
-.clear:hover {
-  color: #5650cf;
-}
-.delete:hover {
-  color: #f72585;
-}
-.add:hover {
-  color: #f3f62e;
-}
-.done:hover {
-  color: #3bdb0a;
+.btn:hover{
+  color: rgba(255, 255, 255, 0.788);
 }
 
-/* end Main form */
 
-/* TABLE */
+
 .form {
   display: flex;
   flex-direction: column;

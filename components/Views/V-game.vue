@@ -1,6 +1,6 @@
 <template>
   <div class="game">
-    <span class="back " @click="$store.commit('OPEN_VIEW', 'V-menu')">Назад</span>
+    <span class="back " @click="$store.commit('OPEN_VIEW', 'ViewsV-menu'); $store.commit('SET_ANIM_DIRECTION', 'left')">Назад</span>
     <div class="scenes">
       <transition name="component-fade" mode="out-in">
         <component
@@ -19,7 +19,7 @@
         @click="getAnswer(key)"
       >
         <div class="img">
-          <img :src="command.img" alt="" />
+          <img src="../../static/img/command.png" alt="" />
           <div class="answer-control" v-if="isGetAnswer">
             <button class="yes" @click.stop="controlAnswer(true, key)">
               Правильно
@@ -38,6 +38,7 @@
 
 <script>
 export default {
+  name:'V-game',
   data() {
     return {
       activeKey: "",
@@ -87,7 +88,7 @@ export default {
 
 <style scoped>
 .component-fade-enter-active {
-  transition: 0.5s ease;
+  transition: 0.2s ease;
 }
 .component-fade-leave-active {
   transition: 0.2s;
@@ -103,6 +104,7 @@ span {
   font-size: 24px;
 }
 button {
+  cursor: pointer;
   width: 100px;
   border: 1px solid #000;
   border-radius: 5px;
@@ -110,18 +112,18 @@ button {
   font-size: 16px;
   padding: 10px;
   height: 60px;
-  cursor: pointer;
 }
 .back{
   position: fixed;
   cursor: pointer;
   top: 10px;
-  left: 10px;
+  right: 10px;
 }
 .back:hover{
   color: rgb(184, 251, 182);
 }
 .game {
+  position: absolute;
   width: 95%;
   height: 95vh;
 }
@@ -150,7 +152,7 @@ button {
   cursor: pointer;
   width: 100%;
   height: 100%;
-  font-size: 44px;
+  font-size: 50px;
 }
 .commands {
   display: flex;
@@ -164,15 +166,20 @@ button {
 .command {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: space-between;
+  box-sizing: border-box;
   background-color: #ffffff5d;
-  backdrop-filter: blur(12px);
   cursor: pointer;
+ 
   border-radius: 10px;
   padding: 10px;
 }
+.command span{
+  font-size: 40px;
+}
 .command img {
-  width: 100%;
+  width: 250px;
+  height: 100%;
   object-fit: cover;
 }
 .active {

@@ -1,7 +1,8 @@
 export default () => ({
-  view:'V-menu',
-  scenarios:[],
+  scenarios: [],
+  selectScenario: {},
   commands: [],
-  commandNames: ["Звездёныши", "Команды", "Помощь", "Выход"],
-  selectScenario:{},
+  view: "ViewsV-menu",
+  animDirection: "right",
+  img:'',
 });
