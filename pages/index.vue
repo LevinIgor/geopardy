@@ -9,19 +9,10 @@
 </template>
 
 <script>
-import { collection, getDocs} from "firebase/firestore";
 export default {
-  async created() {
-    var scenarios = [];
-    const querySnapshot = await getDocs(
-      collection(this.$fire.firestore, "scenarios")
-    ).catch((error)=>{console.log(error);});
-    querySnapshot.forEach((doc) => {
-      scenarios.push(doc.data());
-    });
-    this.$store.commit("SET_SCENARIOS", scenarios);
+  created() {
+    this.$store.dispatch("get_scenarios", this.$fire);
   },
- 
 };
 </script>
 
@@ -32,15 +23,15 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-
 }
 
-
-.right-enter-active, .left-enter-active{
-  transition: .5s;
+.right-enter-active,
+.left-enter-active {
+  transition: 0.5s;
 }
-.right-leave-active, .left-leave-active{
-  transition: .6s;
+.right-leave-active,
+.left-leave-active {
+  transition: 0.6s;
 }
 .right-enter {
   opacity: 0;
@@ -50,11 +41,11 @@ export default {
   opacity: 0;
   transform: translateX(-100%);
 }
-.left-enter{
+.left-enter {
   opacity: 0;
   transform: translateX(-100%);
 }
-.left-leave-to{
+.left-leave-to {
   opacity: 0;
   transform: translateX(100%);
 }
