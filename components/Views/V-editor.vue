@@ -44,7 +44,7 @@
           "
         />
         <div class="control-cell">
-          <button @click="prevQuestion()">Предидущий</button>
+          <button @click="prevQuestion()">Предыдущий</button>
           <button @click="clear()">Очистить</button>
           <button @click="nextQuestion()">Следующий</button>
         </div>
@@ -63,8 +63,8 @@
             {{ scenario.name }}
           </option>
         </select>
-        <span class="btn " @click="clearAll()">Очистить</span>
-        <span class="btn " @click="deleteScenarios()">Удалить</span>
+        <span class="btn" @click="clearAll()">Очистить</span>
+        <span class="btn" @click="deleteScenarios()">Удалить</span>
       </div>
 
       <div class="panel">
@@ -73,14 +73,14 @@
         <input type="range" v-model="tableCols" max="10" min="4" />
         <span>Столбцов:{{ tableCols }}</span>
 
-        <span class="btn " @click="addScenarios()">Создать</span>
+        <span class="btn" @click="addScenarios()">Создать</span>
       </div>
 
       <span
-        class="btn "
+        class="btn"
         @click="
-          $store.commit('OPEN_VIEW', 'ViewsV-menu');
           $store.commit('SET_ANIM_DIRECTION', 'right');
+          $store.commit('OPEN_VIEW', 'ViewsV-menu');
         "
         >Назад</span
       >
@@ -119,6 +119,10 @@
 </template>
 
 <script>
+import deleteDocument from "../../backend/deleteDocument.js";
+import setDocument from "../../backend/setDocument.js";
+
+
 export default {
   name: "V-editor",
   data() {
@@ -134,12 +138,9 @@ export default {
   },
   methods: {
     openQuestion(key, key2) {
-      this.selectedCell = {
-        key: key,
-        key2: key2,
-      };
+      this.selectedCell = { key, key2 };
       this.isSetCell = true;
-      this.$nextTick().then(() => {
+      this.$nextTick(() => {
         this.$refs.tArea1.focus();
       });
     },
@@ -179,15 +180,11 @@ export default {
       }
     },
     clear() {
-      this.selectScenario.table[this.selectedCell.key].body[
-        this.selectedCell.key2
-      ].question = "";
-      this.selectScenario.table[this.selectedCell.key].body[
-        this.selectedCell.key2
-      ].answer = "";
-      this.selectScenario.table[this.selectedCell.key].body[
-        this.selectedCell.key2
-      ].score = 100;
+      let cell = this.selectScenario.table[this.selectedCell.key].body[this.selectedCell.key2]
+
+      cell.question = "";
+      cell.answer = "";
+      cell.score = 100;
     },
     clearAll() {
       this.selectScenario.table.forEach((line) => {
@@ -202,10 +199,7 @@ export default {
       this.$forceUpdate();
     },
     deleteScenarios() {
-      this.$fire.firestore
-        .collection("scenarios")
-        .doc(this.selectScenario.id.toString())
-        .delete();
+      deleteDocument(this.$fire, "scenarios", this.selectScenario.id);
 
       this.scenarios = this.scenarios.filter((scenarios) => {
         return scenarios.id != this.selectScenario.id;
@@ -217,12 +211,12 @@ export default {
 
       this.scenarios.length > 0
         ? (this.selectScenario = this.scenarios[0])
-        : (this.selectScenario = { name: "", table: [] });
+        : (this.selectScenario = { name: "not found", table: [] });
     },
     addScenarios() {
       var _scenarios = { id: Date.now(), name: "", table: [] };
       for (var i = 0; i < this.tableRows; i++) {
-        var line = { name: "", body: [] };
+        var line = { head: "", body: [] };
         for (var j = 0; j < this.tableCols; j++) {
           line.body.push({ question: "", answer: "", score: 100 });
         }
@@ -241,17 +235,14 @@ export default {
     },
   },
   activated() {
-    this.scenarios = JSON.parse(JSON.stringify(this.$store.state.scenarios));
+    this.scenarios = structuredClone(this.$store.state.scenarios)
   },
   deactivated() {
     var _update = [...new Set(this.updateList)];
 
     this.scenarios.forEach((scenario) => {
       if (_update.indexOf(scenario.id) != -1) {
-        this.$fire.firestore
-          .collection("scenarios")
-          .doc(scenario.id.toString())
-          .set(scenario);
+        setDocument(this.$fire, "scenarios", scenario);
       }
     });
 
@@ -261,13 +252,10 @@ export default {
 </script>
 
 <style scoped>
-/* Main prop */
 select {
-  outline: none;
   background-color: initial;
-  border: none;
   color: inherit;
-  cursor: pointer;
+  text-align: center;
   font-size: 24px;
   min-width: 200px;
 }
@@ -277,8 +265,6 @@ option {
 
 input {
   background-color: initial;
-  outline: none;
-  border: none;
   color: inherit;
   text-align: center;
   font-size: 28px;
@@ -289,11 +275,12 @@ input {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-   background-color: #ffffff48;
-   overflow: hidden;
-    border-radius: 10px;
+  background-color: #ffffff48;
+  overflow: hidden;
+  border-radius: 10px;
   width: 95%;
   height: 95%;
+  max-width: 2400px;
 }
 .popup {
   position: absolute;
@@ -308,7 +295,6 @@ input {
   width: 100%;
   height: 100%;
 }
-
 
 .header {
   display: flex;
@@ -332,13 +318,11 @@ input {
 .btn {
   cursor: pointer;
   margin-left: 20px;
-  transition: .2s;
+  transition: 0.2s;
 }
-.btn:hover{
+.btn:hover {
   color: rgba(255, 255, 255, 0.788);
 }
-
-
 
 .form {
   display: flex;
@@ -350,7 +334,6 @@ input {
   padding: 30px;
 }
 .form textarea {
-  outline: none;
   background-color: initial;
   font-size: var(--font-size-average);
   margin: 0 30px;
@@ -389,9 +372,7 @@ input {
   transition: 0.3s;
 }
 .form input {
-  outline: none;
   background-color: initial;
-  border: none;
   font-size: var(--font-size-big);
   text-align: center;
   margin: 20px 0;

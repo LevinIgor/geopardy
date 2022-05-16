@@ -5,14 +5,13 @@
 </template>
 
 <script>
-import getCollection from "../backend/getCollection.js";
-import setDocument from "../backend/setDocument.js";
-import deleteDocument from "../backend/deleteDocument.js";
 
 export default {
+
   methods: {
     async click() {
-     this.$store.dispatch('get_scenarios',this.$fire)
+    //  this.$store.dispatch('get_scenarios',this.$fire)
+ 
     },
   },
 };

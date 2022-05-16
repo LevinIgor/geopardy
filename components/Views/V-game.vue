@@ -19,7 +19,7 @@
         @click="getAnswer(key)"
       >
         <div class="img">
-          <img src="../../static/img/command.png" alt="" />
+          <img :src="command.img" alt="" />
           <div class="answer-control" v-if="isGetAnswer">
             <button class="yes" @click.stop="controlAnswer(true, key)">
               Правильно
@@ -79,10 +79,11 @@ export default {
     },
   },
   activated() {
-    this.scenario = JSON.parse(JSON.stringify(this.$store.state.selectScenario));
-    this.commands = JSON.parse(JSON.stringify(this.$store.state.commands));
+    this.scenario = structuredClone(this.$store.state.selectScenario);
+    this.commands = structuredClone(this.$store.state.commands);
     this.currentProp = this.scenario.table;
   },
+  
 };
 </script>
 
@@ -179,7 +180,7 @@ button {
 }
 .command img {
   width: 250px;
-  height: 100%;
+  height: 200px;
   object-fit: cover;
 }
 .active {

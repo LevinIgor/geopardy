@@ -1,10 +1,7 @@
-import { getRandomName } from "~/func/getRandomName";
-import { getRandomImg } from "~/func/getRandomImg";
+import  getRandomName  from "~/func/getRandomName";
+import  getRandomImg  from "~/func/getRandomImg";
 
 export default {
-  UPDATE_COMMAND(state, payload) {
-    state.commands[payload.key].name = payload.name;
-  },
 
   SET_SELECT(state, scenario) {
     state.selectScenario = scenario;
@@ -14,6 +11,9 @@ export default {
     state.scenarios = scenarios;
   },
 
+  SET_COMMAND_NAME(state, payload) {
+    state.commands[payload.key].name = payload.name;
+  },
   OPEN_VIEW(state, view) {
     state.view = view;
   },
@@ -22,7 +22,7 @@ export default {
     var commands = [];
     for (let i = 0; i < count; i++) {
       commands.push({
-        img: "../static/icons/editor.png",
+        img: getRandomImg(),
         name: getRandomName(),
         score: 0,
       });
@@ -33,7 +33,11 @@ export default {
   SET_ANIM_DIRECTION(state, direction) {
     state.animDirection = direction;
   },
-  CHANGE_COMMAND_IMG(state, index) {
-    state.img = getRandomImg()[0];
+
+  SET_RANDOM_COMMAND_NAME(state, index) {
+    state.commands[index].name = getRandomName()
+  },
+  SET_RANDOM_COMMAND_IMG(state, index) {
+    state.commands[index].img = getRandomImg();
   },
 };

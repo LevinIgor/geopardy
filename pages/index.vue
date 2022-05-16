@@ -5,6 +5,11 @@
         <component :is="this.$store.state.view" />
       </keep-alive>
     </transition>
+
+  <div class="imgs">
+    <img v-for="src in this.$store.state.randomImgs" :key="src" :src="src" alt="">
+  </div>
+
   </div>
 </template>
 
@@ -25,6 +30,10 @@ export default {
   align-items: center;
 }
 
+.imgs{
+  visibility: hidden;
+}
+
 .right-enter-active,
 .left-enter-active {
   transition: 0.5s;
@@ -33,20 +42,14 @@ export default {
 .left-leave-active {
   transition: 0.6s;
 }
-.right-enter {
-  opacity: 0;
-  transform: translateX(100%);
-}
-.right-leave-to {
-  opacity: 0;
-  transform: translateX(-100%);
-}
-.left-enter {
-  opacity: 0;
-  transform: translateX(-100%);
-}
+.right-enter,
 .left-leave-to {
   opacity: 0;
   transform: translateX(100%);
+}
+.right-leave-to,
+.left-enter {
+  opacity: 0;
+  transform: translateX(-100%);
 }
 </style>

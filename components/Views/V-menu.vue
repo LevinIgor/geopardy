@@ -44,8 +44,8 @@
     </div>
     <div class="commands">
       <div class="command" v-for="(command, key) in commands" :key="key">
-        <div class="img" @click="changeCommandImg(key)">
-          <img src="../../static/img/command.png" alt="" />
+        <div class="img" @click="$store.commit('SET_RANDOM_COMMAND_IMG', key)">
+          <img :src="command.img" alt="" />
         </div>
         <div class="command-name">
           <input
@@ -53,7 +53,7 @@
             placeholder="Название"
             :value="command.name"
             @input="
-              $store.commit('UPDATE_COMMAND', {
+              $store.commit('SET_COMMAND_NAME', {
                 key,
                 name: $event.target.value,
               })
@@ -63,7 +63,7 @@
             src="../../static/icons/random.png"
             alt=""
             class="icon"
-            @click="randomName(key)"
+            @click="$store.commit('SET_RANDOM_COMMAND_NAME', key)"
           />
         </div>
       </div>
@@ -72,7 +72,6 @@
 </template>
 
 <script>
-import { getRandomName } from "../../func/getRandomName";
 export default {
   name: "V-menu",
   data() {
@@ -88,18 +87,12 @@ export default {
     changeSelect() {
       this.$store.commit("SET_SELECT", this.select);
     },
-    randomName(key) {
-      this.$store.commit("UPDATE_COMMAND", { key: key, name: getRandomName() });
-    },
-    changeCommandImg(key) {
-     this.$store.commit('CHANGE_COMMAND_IMG', key);
-    }
   },
   computed: {
     scenarios() {
       var s = this.$store.state.scenarios;
-      this.select == null ? (this.select = s[0]):''
-      this.changeSelect()
+      this.select == null ? (this.select = s[0]) : "";
+      this.changeSelect();
       return s;
     },
     commands() {
@@ -127,6 +120,14 @@ option {
 input[type="range"] {
   margin-left: 10px;
 }
+.V-menu {
+  position: absolute;
+  background-color: #ffffff48;
+  overflow: hidden;
+  border-radius: 10px;
+  width: 80%;
+  height: 80%;
+}
 .panel {
   display: flex;
   align-items: center;
@@ -143,14 +144,6 @@ input[type="range"] {
 .panel:hover {
   background-color: #f5f5f53f;
 }
-.V-menu {
-  position: absolute;
-  background-color: #ffffff48;
-  overflow: hidden;
-  border-radius: 10px;
-  width: 80%;
-  height: 80%;
-}
 .buttons {
   width: 100%;
   display: flex;
@@ -162,11 +155,6 @@ input[type="range"] {
 }
 .run {
   background-color: #0c992365;
-}
-.remove-command {
-  position: absolute;
-  top: -10px;
-  right: -10px;
 }
 
 .header {
@@ -188,32 +176,44 @@ input[type="range"] {
 
 .command {
   background-color: rgba(207, 241, 250, 0.589);
-  padding: 20px;
-  margin-bottom: 20px;
+  padding: 20px 20px 10px 20px;
   border-radius: 10px;
   max-width: 25%;
 }
+.remove-command {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+}
 img {
   width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 input {
   text-align: center;
+  cursor: text;
+  background-color: initial;
+  color: white;
   font-size: var(--font-size-average);
   width: 100%;
 }
+
 .img {
-  max-width: 300px;
+  cursor: pointer;
+  width: 250px;
+  height: 250px;
 }
+
 .command-name {
   display: flex;
   align-items: center;
-  background-color: white;
   padding: 10px;
+
 }
+
 .icon {
   cursor: pointer;
-
   width: 25px;
   height: 25px;
 }

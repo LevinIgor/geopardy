@@ -1,11 +1,8 @@
-export default async function deleteDocument(firebase, collection, document) {
-  return new Promise((resolve) => {
+export default async function deleteDocument(firebase, collection, documentId) {
+  return new Promise(() => {
     firebase.firestore
       .collection(collection)
-      .doc(document.id.toString())
+      .doc(documentId.toString())
       .delete()
-      .then(() => {
-        resolve();
-      });
   });
 }
