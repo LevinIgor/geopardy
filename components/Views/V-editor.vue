@@ -78,10 +78,7 @@
 
       <span
         class="btn"
-        @click="
-          $store.commit('SET_ANIM_DIRECTION', 'right');
-          $store.commit('OPEN_VIEW', 'ViewsV-menu');
-        "
+        @click="$store.commit('OPEN_VIEW', {view:'ViewsV-menu', animDirection:'right'});"
         >Назад</span
       >
     </div>

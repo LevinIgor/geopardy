@@ -32,6 +32,7 @@ export default {
 
 .imgs{
   visibility: hidden;
+  position: absolute;
 }
 
 .right-enter-active,

@@ -9,9 +9,8 @@
 export default {
 
   methods: {
-    async click() {
-    //  this.$store.dispatch('get_scenarios',this.$fire)
- 
+     click() {
+      console.log('click')
     },
   },
 };

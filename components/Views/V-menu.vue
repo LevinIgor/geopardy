@@ -24,8 +24,10 @@
       <div
         class="panel"
         @click="
-          $store.commit('OPEN_VIEW', 'ViewsV-editor');
-          $store.commit('SET_ANIM_DIRECTION', 'left');
+          $store.commit('OPEN_VIEW', {
+            view: 'ViewsV-editor',
+            animDirection: 'left',
+          })
         "
       >
         <img class="icon" src="../../static/icons/editor.png" alt="" />
@@ -35,8 +37,10 @@
       <span
         class="panel run"
         @click="
-          $store.commit('OPEN_VIEW', 'ViewsV-game');
-          $store.commit('SET_ANIM_DIRECTION', 'right');
+          $store.commit('OPEN_VIEW', {
+            view: 'ViewsV-game',
+            animDirection: 'right',
+          })
         "
       >
         Начать</span
@@ -59,12 +63,12 @@
               })
             "
           />
-          <img
-            src="../../static/icons/random.png"
-            alt=""
-            class="icon"
+          <div
+            class="random-name"
             @click="$store.commit('SET_RANDOM_COMMAND_NAME', key)"
-          />
+          >
+            <img src="../../static/icons/random.png" alt="" class="icon" />
+          </div>
         </div>
       </div>
     </div>
@@ -189,6 +193,7 @@ img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  pointer-events: none;
 }
 input {
   text-align: center;
@@ -209,11 +214,12 @@ input {
   display: flex;
   align-items: center;
   padding: 10px;
-
+}
+.random-name{
+  cursor: pointer;
 }
 
 .icon {
-  cursor: pointer;
   width: 25px;
   height: 25px;
 }

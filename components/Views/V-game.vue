@@ -1,6 +1,6 @@
 <template>
   <div class="game">
-    <span class="back " @click="$store.commit('OPEN_VIEW', 'ViewsV-menu'); $store.commit('SET_ANIM_DIRECTION', 'left')">Назад</span>
+    <span class="back " @click="$store.commit('OPEN_VIEW', {view:'ViewsV-menu', animDirection:'left'})">Назад</span>
     <div class="scenes">
       <transition name="component-fade" mode="out-in">
         <component

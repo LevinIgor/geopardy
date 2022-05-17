@@ -14,8 +14,9 @@ export default {
   SET_COMMAND_NAME(state, payload) {
     state.commands[payload.key].name = payload.name;
   },
-  OPEN_VIEW(state, view) {
-    state.view = view;
+  OPEN_VIEW(state, payload) {
+    state.view = payload.view;
+    state.animDirection = payload.animDirection;
   },
 
   ADD_COMMANDS(state, count) {
@@ -28,10 +29,6 @@ export default {
       });
     }
     state.commands = commands;
-  },
-
-  SET_ANIM_DIRECTION(state, direction) {
-    state.animDirection = direction;
   },
 
   SET_RANDOM_COMMAND_NAME(state, index) {

@@ -5,5 +5,6 @@ export default function getRandomName() {
 
   var max = randomNames.length;
   var rand = Math.floor(Math.random() * max);
+  
   return randomNames[rand];
 };
