@@ -23,6 +23,7 @@ export default {
     var commands = [];
     for (let i = 0; i < count; i++) {
       commands.push({
+        id:i,
         img: getRandomImg(),
         name: getRandomName(),
         score: 0,
@@ -35,6 +36,7 @@ export default {
     state.commands[index].name = getRandomName()
   },
   SET_RANDOM_COMMAND_IMG(state, index) {
+
     state.commands[index].img = getRandomImg();
   },
 };

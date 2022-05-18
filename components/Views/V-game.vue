@@ -1,6 +1,16 @@
 <template>
   <div class="game">
-    <span class="back " @click="$store.commit('OPEN_VIEW', {view:'ViewsV-menu', animDirection:'left'})">Назад</span>
+    <span
+      class="back"
+      @click="
+        $store.commit('OPEN_VIEW', {
+          view: 'ViewsV-menu',
+          animDirection: 'left',
+        })
+      "
+      >Назад</span
+    >
+
     <div class="scenes">
       <transition name="component-fade" mode="out-in">
         <component
@@ -10,6 +20,7 @@
         />
       </transition>
     </div>
+
     <div class="commands">
       <div
         class="command"
@@ -38,13 +49,13 @@
 
 <script>
 export default {
-  name:'V-game',
+  name: "V-game",
   data() {
     return {
       activeKey: "",
       isGetAnswer: false,
       view: "V-table",
-      currentProp: {},
+      currentProp: null,
       commands: {},
       scenario: {},
     };
@@ -83,7 +94,6 @@ export default {
     this.commands = structuredClone(this.$store.state.commands);
     this.currentProp = this.scenario.table;
   },
-  
 };
 </script>
 
@@ -114,13 +124,13 @@ button {
   padding: 10px;
   height: 60px;
 }
-.back{
+.back {
   position: fixed;
   cursor: pointer;
   top: 10px;
   right: 10px;
 }
-.back:hover{
+.back:hover {
   color: rgb(184, 251, 182);
 }
 .game {
@@ -171,11 +181,11 @@ button {
   box-sizing: border-box;
   background-color: #ffffff5d;
   cursor: pointer;
- 
+
   border-radius: 10px;
   padding: 10px;
 }
-.command span{
+.command span {
   font-size: 40px;
 }
 .command img {

@@ -47,30 +47,13 @@
       >
     </div>
     <div class="commands">
-      <div class="command" v-for="(command, key) in commands" :key="key">
-        <div class="img" @click="$store.commit('SET_RANDOM_COMMAND_IMG', key)">
-          <img :src="command.img" alt="" />
-        </div>
-        <div class="command-name">
-          <input
-            type="text"
-            placeholder="Название"
-            :value="command.name"
-            @input="
-              $store.commit('SET_COMMAND_NAME', {
-                key,
-                name: $event.target.value,
-              })
-            "
-          />
-          <div
-            class="random-name"
-            @click="$store.commit('SET_RANDOM_COMMAND_NAME', key)"
-          >
-            <img src="../../static/icons/random.png" alt="" class="icon" />
-          </div>
-        </div>
-      </div>
+      <V-command
+        v-for="command in commands"
+        :key="command.id"
+        :command="command"
+        @imgClick="$store.commit('SET_RANDOM_COMMAND_IMG', $event)"
+        @randomName="$store.commit('SET_RANDOM_COMMAND_NAME', $event)"
+      />
     </div>
   </div>
 </template>
@@ -178,23 +161,6 @@ input[type="range"] {
   padding: 20px;
 }
 
-.command {
-  background-color: rgba(207, 241, 250, 0.589);
-  padding: 20px 20px 10px 20px;
-  border-radius: 10px;
-  max-width: 25%;
-}
-.remove-command {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-}
-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  pointer-events: none;
-}
 input {
   text-align: center;
   cursor: text;
@@ -202,25 +168,5 @@ input {
   color: white;
   font-size: var(--font-size-average);
   width: 100%;
-}
-
-.img {
-  cursor: pointer;
-  width: 250px;
-  height: 250px;
-}
-
-.command-name {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-}
-.random-name{
-  cursor: pointer;
-}
-
-.icon {
-  width: 25px;
-  height: 25px;
 }
 </style>
