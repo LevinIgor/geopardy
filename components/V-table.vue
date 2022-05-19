@@ -1,13 +1,21 @@
 <template>
   <div class="table">
-    <div class="line" v-for="(item, key) in currentProp" :key="item.head">
-      <span class="heading">{{ item.head }}</span>
-      <div
-        class="cell"
-        v-for="(cell, key2) in item.body"
-        @click="showQuestion(cell, key, key2)"
-        :key=" key+key2"
-        >{{ cell.score }}</div
+    <div class="row" v-for="row in table" :key="row.id">
+      <input
+        type="text"
+        placeholder="Категория"
+        v-model="row.header"
+        class="row-header"
+        :readonly="readonly"
+        :ref="'tableCategory' + row.id"
+        @keypress.enter="$emit('enterPress', row.id)"
+      />
+      <span
+        class="column"
+        v-for="(column, index) in row.cols"
+        :key="index"
+        @click="$emit('tableClick',  [row.id, index])"
+        >{{ column.score }}</span
       >
     </div>
   </div>
@@ -15,60 +23,74 @@
 
 <script>
 export default {
-  props:['currentProp'],
-  methods: {
-    showQuestion(cell, key, key2) {
-      if (cell.score !== 0) {
-        this.$emit('event', {cell, key, key2, type: 'showQuestion'});
-      }
+  props: {
+    table: {
+      type: Array,
+      require: true,
+      default: () => [
+        {
+          id: 0,
+          header: "test row head",
+          cols: [{ question: "", answer: "", score: 100 }],
+        },
+      ],
     },
-  }
+    readonly: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  methods: {
+    setFocus(element) {
+      this.$refs[element][0].focus();
+    },
+  },
 };
 </script>
 
 <style scoped>
-.head{
-  width: 100%;
-  font-size: 44px;
+input,
+span {
+  resize: none;
   text-align: center;
-  padding-top: 10px;
+  color: white;
+  background-color: initial;
 }
 .table {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   width: 100%;
   height: 100%;
 }
-.line {
-  display: flex;
-  justify-content: space-between;
-  height: 100%;
-  padding: 10px;
+.header {
+  font-size: 44px;
 }
-.cell {
+.row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+.row-header {
+  min-width: max-content;
+  text-align: center;
+  font-size: 44px;
+}
+
+.column {
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  border-radius: 5px;
-  transition: .2s;
-  font-size: 28px;
-  font-weight: 600;
-  width: 100%;
-  margin-left: 10px;
-  
+  transition: 0.2s;
+  font-size: 25px;
+  border-radius: 10px;
+  width: 10%;
+  height: 70%;
 }
-.cell:hover{
-  background-color: rgba(0, 0, 0, 0.198);
-}
-.heading{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
 
-  font-size: 28px;
-  min-width: 20%;
+.column:hover {
+  background-color: rgba(0, 0, 0, 0.404);
 }
 </style>

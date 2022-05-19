@@ -3,9 +3,9 @@
     <div class="popup" v-if="isSetCell" @click.self="isSetCell = false">
       <div class="form">
         <span class="head"
-          >{{ selectScenario.table[selectedCell.key].head }}||
+          >{{ selectScenario.table[selectedCell.key].header }}||
           {{ selectedCell.key2 + 1 }} из
-          {{ selectScenario.table[selectedCell.key].body.length }}</span
+          {{ tableColsLength }}</span
         >
         <textarea
           cols="90"
@@ -14,7 +14,7 @@
           ref="tArea1"
           placeholder="Вопрос:"
           v-model="
-            selectScenario.table[selectedCell.key].body[selectedCell.key2]
+            selectScenario.table[selectedCell.key].cols[selectedCell.key2]
               .question
           "
           @keydown.esc="$refs.tArea1.blur()"
@@ -28,7 +28,7 @@
           placeholder="Ответ:"
           class="inputs"
           v-model="
-            selectScenario.table[selectedCell.key].body[selectedCell.key2]
+            selectScenario.table[selectedCell.key].cols[selectedCell.key2]
               .answer
           "
           @keydown.esc="$refs.tArea2.blur()"
@@ -40,7 +40,7 @@
           class="score inputs"
           placeholder="Очки:"
           v-model.number="
-            selectScenario.table[selectedCell.key].body[selectedCell.key2].score
+            selectScenario.table[selectedCell.key].cols[selectedCell.key2].score
           "
         />
         <div class="control-cell">
@@ -78,7 +78,12 @@
 
       <span
         class="btn"
-        @click="$store.commit('OPEN_VIEW', {view:'ViewsV-menu', animDirection:'right'});"
+        @click="
+          $store.commit('OPEN_VIEW', {
+            view: 'ViewsV-menu',
+            animDirection: 'right',
+          })
+        "
         >Назад</span
       >
     </div>
@@ -90,27 +95,16 @@
         placeholder="Название"
         maxlength="30"
         ref="iName"
-        @keypress.enter="$refs.iCategory0[0].focus()"
+        @keypress.enter="$refs.table.setFocus('tableCategory0')"
       />
-      <div class="line" v-for="(line, key) in selectScenario.table" :key="key">
-        <input
-          type="text"
-          class="table-head input"
-          v-model="line.head"
-          placeholder="Категория"
-          maxlength="25"
-          :ref="'iCategory' + key"
-          @keypress.enter="nextCategory(key)"
-        />
-        <div
-          class="body"
-          v-for="(cell, key2) in line.body"
-          :key="key2"
-          @click="openQuestion(key, key2)"
-        >
-          {{ cell.score }}
-        </div>
-      </div>
+
+      <V-table
+        :table="selectScenario.table"
+        :readonly="false"
+        @tableClick="openQuestion($event)"
+        @enterPress="nextCategory($event)"
+        ref="table"
+      />
     </div>
   </div>
 </template>
@@ -119,14 +113,13 @@
 import deleteDocument from "../../backend/deleteDocument.js";
 import setDocument from "../../backend/setDocument.js";
 
-
 export default {
   name: "V-editor",
   data() {
     return {
       selectScenario: "",
       isSetCell: false,
-      selectedCell: {},
+      selectedCell: { key: 0, key2: 0 },
       tableRows: 5,
       tableCols: 6,
       updateList: [],
@@ -134,8 +127,8 @@ export default {
     };
   },
   methods: {
-    openQuestion(key, key2) {
-      this.selectedCell = { key, key2 };
+    openQuestion(index) {
+      this.selectedCell = { key: index[0], key2: index[1] };
       this.isSetCell = true;
       this.$nextTick(() => {
         this.$refs.tArea1.focus();
@@ -143,41 +136,39 @@ export default {
     },
     nextCategory(key) {
       key + 1 < this.selectScenario.table.length
-        ? this.$refs["iCategory" + (key + 1).toString()][0].focus()
-        : this.openQuestion(0, 0);
+        ? this.$refs.table.setFocus("tableCategory" + (key + 1).toString())
+        : this.openQuestion([0, 0]);
     },
     nextQuestion() {
-      var key = this.selectedCell.key;
-      var key2 = this.selectedCell.key2;
+      var row = this.selectedCell.key;
+      var col = this.selectedCell.key2;
 
-      if (key2 < this.selectScenario.table[key].body.length - 1) {
+      if (col < this.tableColsLength - 1) {
+        this.selectScenario.table[row].cols[col + 1].score =
+          this.selectScenario.table[row].cols[col].score + 200;
         this.selectedCell.key2++;
-        this.selectScenario.table[this.selectedCell.key].body[
-          this.selectedCell.key2
-        ].score = this.selectScenario.table[key].body[key2].score + 200;
       } else {
         this.selectedCell.key2 = 0;
-        if (key < this.selectScenario.table.length - 1) {
-          this.selectedCell.key++;
-        }
+        this.tableRowsLength - 1 > row ? this.selectedCell.key++ : "";
       }
       this.$refs.tArea1.focus();
     },
     prevQuestion() {
-      var key = this.selectedCell.key;
-      var key2 = this.selectedCell.key2;
+      var row = this.selectedCell.key;
+      var col = this.selectedCell.key2;
 
-      if (key2 > 0) {
+      if (col > 0) {
         this.selectedCell.key2--;
       } else {
-        this.selectedCell.key2 = this.selectScenario.table[key].body.length - 1;
-        if (key > 0) {
-          this.selectedCell.key--;
-        }
+        this.selectedCell.key2 = this.tableColsLength - 1;
+        row > 0 ? this.selectedCell.key-- : "";
       }
     },
     clear() {
-      let cell = this.selectScenario.table[this.selectedCell.key].body[this.selectedCell.key2]
+      let cell =
+        this.selectScenario.table[this.selectedCell.key].cols[
+          this.selectedCell.key2
+        ];
 
       cell.question = "";
       cell.answer = "";
@@ -213,9 +204,9 @@ export default {
     addScenarios() {
       var _scenarios = { id: Date.now(), name: "", table: [] };
       for (var i = 0; i < this.tableRows; i++) {
-        var line = { head: "", body: [] };
+        var line = { id: i, header: "", cols: [] };
         for (var j = 0; j < this.tableCols; j++) {
-          line.body.push({ question: "", answer: "", score: 100 });
+          line.cols.push({ question: "", answer: "", score: 100 });
         }
         _scenarios.table.push(line);
       }
@@ -232,7 +223,7 @@ export default {
     },
   },
   activated() {
-    this.scenarios = structuredClone(this.$store.state.scenarios)
+    this.scenarios = structuredClone(this.$store.state.scenarios);
   },
   deactivated() {
     var _update = [...new Set(this.updateList)];
@@ -244,6 +235,14 @@ export default {
     });
 
     this.$store.commit("SET_SCENARIOS", this.scenarios);
+  },
+  computed: {
+    tableRowsLength() {
+      return this.selectScenario.table.length;
+    },
+    tableColsLength() {
+      return this.selectScenario.table[this.selectedCell.key].cols.length;
+    },
   },
 };
 </script>
