@@ -1,5 +1,6 @@
 <template>
   <div class="command">
+    <slot></slot>
     <div class="img" @click="$emit('imgClick',command.id)">
       <img :src="command.img" alt="" />
     </div>
@@ -9,6 +10,7 @@
         placeholder="Название"
         ref="name"
         :value="command.name"
+        :readonly="readonly"
         @keyup.enter="$refs['name'].blur()"
         @input="
           $store.commit('SET_COMMAND_NAME', {
@@ -17,11 +19,11 @@
           })
         "
       />
-      <div class="img" @click="$emit('randomName',command.id)">
-        <img src="../static/icons/random.png" alt="" class="icon" />
+      <div class="img-icon" @click="$emit('randomName',command.id)">
+        <img src="../static/icons/random.png" alt="" class="icon" v-if="!readonly"/>
       </div>
     </div>
-    <span class="score">{{ command.score }}</span>
+    <span class="score" v-if="readonly">{{ command.score }}</span>
   </div>
 </template>
 
@@ -29,8 +31,8 @@
 export default {
   props: {
     command: {
-      require: true,
       type: Object,
+      require: true,
       default: () => ({
         id: 0,
         img: "",
@@ -38,6 +40,11 @@ export default {
         score: 100,
       }),
     },
+    readonly:{
+      type: Boolean,
+      default: true,
+    },
+
   },
 };
 </script>
@@ -66,6 +73,7 @@ input {
   height: 25px;
 }
 .command {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -74,6 +82,9 @@ input {
   padding: 20px;
   height: 300px;
   width: 250px;
+}
+.img{
+  height: 200px;
 }
 
 .name {

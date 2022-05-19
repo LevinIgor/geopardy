@@ -51,6 +51,7 @@
         v-for="command in commands"
         :key="command.id"
         :command="command"
+        :readonly="false"
         @imgClick="$store.commit('SET_RANDOM_COMMAND_IMG', $event)"
         @randomName="$store.commit('SET_RANDOM_COMMAND_NAME', $event)"
       />

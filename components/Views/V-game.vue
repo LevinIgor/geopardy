@@ -22,27 +22,31 @@
     </div>
 
     <div class="commands">
-      <div
+      <V-command
+        v-for="command in commands"
+        :key="command.id"
+        :command="command"
+        :class="{ active: command.id == activeKey }"
+        @imgClick="getAnswer($event)"
         class="command"
-        v-for="(command, key) in commands"
-        :key="key"
-        :class="{ active: activeKey == key }"
-        @click="getAnswer(key)"
       >
-        <div class="img">
-          <img :src="command.img" alt="" />
-          <div class="answer-control" v-if="isGetAnswer">
-            <button class="yes" @click.stop="controlAnswer(true, key)">
-              Правильно
-            </button>
-            <button class="no" @click.stop="controlAnswer(false, key)">
-              Не правильно
-            </button>
+        <div
+          class="popup"
+          @click.self="(activeKey = null), (isGetAnswer = false)"
+        >
+          <div class="popup-content">
+            <div class="popup-header">Ответ верный?</div>
+            <div class="popup-control">
+              <button class="yes" @click="answerControl(true, command.id)">
+                Да
+              </button>
+              <button class="no" @click="answerControl(false, command.id)">
+                Нет
+              </button>
+            </div>
           </div>
-        </div>
-        <span>{{ command.name }}</span>
-        <span>{{ command.score }}</span>
-      </div>
+        </div></V-command
+      >
     </div>
   </div>
 </template>
@@ -52,7 +56,7 @@ export default {
   name: "V-game",
   data() {
     return {
-      activeKey: "",
+      activeKey: null,
       isGetAnswer: false,
       view: "V-table",
       currentProp: null,
@@ -67,8 +71,9 @@ export default {
         this.isGetAnswer = true;
       }
     },
-    controlAnswer(isCorrect, index) {
+    answerControl(isCorrect, index) {
       this.isGetAnswer = false;
+      this.activeKey = null;
       isCorrect
         ? ((this.commands[index].score += this.currentProp.cell.score),
           this.event({ type: "showAnswer" }))
@@ -79,7 +84,7 @@ export default {
         this.currentProp = event;
         this.view = "V-Q-text";
       }
-      if (event.type == "showAnswer") {
+      if (event.type == "showAnswer" && !this.isGetAnswer) {
         this.view = "V-A-text";
       }
       if (event.type == "showTable") {
@@ -98,32 +103,11 @@ export default {
 </script>
 
 <style scoped>
-.component-fade-enter-active {
-  transition: 0.2s ease;
-}
-.component-fade-leave-active {
-  transition: 0.2s;
-}
-.component-fade-enter {
-  opacity: 0;
-}
-.component-fade-leave-to {
-  opacity: 0;
-}
 span {
   text-align: center;
   font-size: 24px;
 }
-button {
-  cursor: pointer;
-  width: 100px;
-  border: 1px solid #000;
-  border-radius: 5px;
-  margin: 10px;
-  font-size: 16px;
-  padding: 10px;
-  height: 60px;
-}
+
 .back {
   position: fixed;
   cursor: pointer;
@@ -133,19 +117,11 @@ button {
 .back:hover {
   color: rgb(184, 251, 182);
 }
+
 .game {
   position: absolute;
   width: 95%;
   height: 95vh;
-}
-.popup {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 10;
 }
 
 .scenes {
@@ -175,55 +151,70 @@ button {
   height: 35%;
 }
 .command {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  box-sizing: border-box;
-  background-color: #ffffff5d;
   cursor: pointer;
-
-  border-radius: 10px;
-  padding: 10px;
 }
-.command span {
-  font-size: 40px;
-}
-.command img {
-  width: 250px;
-  height: 200px;
-  object-fit: cover;
-}
-.active {
-  z-index: 11;
-}
-.active .answer-control {
+.active .popup {
   opacity: 1;
+  z-index: 10;
 }
-.img {
-  position: relative;
-}
-.answer-control {
+.popup {
   position: absolute;
   display: flex;
-  justify-content: space-around;
+  backdrop-filter: blur(3px);
+  background-color: #ffffff48;
+  overflow: hidden;
+  justify-content: center;
   align-items: center;
-  background-color: #3e1f47;
-  z-index: 11;
+  z-index: -1;
+  transition: 0.2s;
+  background-color: rgba(0, 0, 0, 0.488);
   opacity: 0;
   top: 0;
   left: 0;
+  border-radius: 10px;
   width: 100%;
   height: 100%;
 }
+.popup-header {
+  font-size: 34px;
+}
+.popup-control {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+  width: 100%;
+}
+.popup-control button {
+  cursor: pointer;
+  border: none;
+  color: white;
+  transition: 0.2s;
+  border-radius: 10px;
+  width: 90px;
+  height: 50px;
+  font-size: 22px;
+}
+
+.popup-control button:hover {
+  background-color: rgb(56, 67, 138);
+  transform: scale(1.02);
+}
 .yes {
-  background-color: #347450;
-  color: rgb(255, 255, 255);
+  background-color: rgb(37, 130, 99);
 }
 .no {
-  background-color: rgb(131, 54, 54);
-  color: #ffffff;
+  background-color: rgb(138, 32, 32);
 }
-button:hover {
-  background-color: #3e1f47;
+.component-fade-enter-active {
+  transition: 0.2s ease;
+}
+.component-fade-leave-active {
+  transition: 0.2s;
+}
+.component-fade-enter {
+  opacity: 0;
+}
+.component-fade-leave-to {
+  opacity: 0;
 }
 </style>
