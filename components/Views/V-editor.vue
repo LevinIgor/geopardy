@@ -1,12 +1,60 @@
 <template>
   <div class="editor">
-    <div class="popup" v-if="isSetCell" @click.self="isSetCell = false">
+    <transition name=popup>
+       <div class="popup" v-if="isSetCell" @click.self="isSetCell = false">
       <div class="form">
-        <span class="head"
-          >{{ selectScenario.table[selectedCell.key].header }}||
-          {{ selectedCell.key2 + 1 }} из
-          {{ tableColsLength }}</span
+        <span class="head">
+          {{ selectScenario.table[selectedCell.key].header }}||
+          {{ selectedCell.key2 + 1 }} из {{ tableColsLength }}</span
         >
+        <div class="question-type">
+          <span>Тип: </span>
+          <span
+            class="type-button"
+            :class="{ 'type-active': selectScenario.table[selectedCell.key].cols[selectedCell.key2].type === 'text' }"
+            @click="
+              (type = 'text'),
+                (selectScenario.table[selectedCell.key].cols[
+                  selectedCell.key2
+                ].type = 'text')
+            "
+          >
+            Text
+          </span>
+          <span
+            class="type-button"
+            :class="{ 'type-active': selectScenario.table[selectedCell.key].cols[selectedCell.key2].type == 'audio' }"
+            @click="
+              (type = 'audio'),
+                (selectScenario.table[selectedCell.key].cols[
+                  selectedCell.key2
+                ].type = 'audio')
+            "
+          >
+            Audio
+          </span>
+          <span
+            class="type-button"
+            :class="{ 'type-active':selectScenario.table[selectedCell.key].cols[selectedCell.key2].type === 'special'  }"
+            @click="
+              (type = 'special'),
+                (selectScenario.table[selectedCell.key].cols[
+                  selectedCell.key2
+                ].type = 'special')
+            "
+          >
+            Special
+          </span>
+        </div>
+        <div class="input-audio" :class="{'show':selectScenario.table[selectedCell.key].cols[selectedCell.key2].type ===  'audio'}">
+          <input type="file" name="" id="" @change="uploadAudio($event)" accept=".mp3" />
+          <audio
+            controls
+            :src="
+              selectScenario.table[selectedCell.key].cols[selectedCell.key2].src
+            "
+          />
+        </div>
         <textarea
           cols="90"
           rows="10"
@@ -50,6 +98,8 @@
         </div>
       </div>
     </div>
+    </transition>
+   
 
     <div class="header">
       <div class="panel">
@@ -112,6 +162,8 @@
 <script>
 import deleteDocument from "../../backend/deleteDocument.js";
 import setDocument from "../../backend/setDocument.js";
+import uploadAudio from "../../backend/uploadAudio.js";
+import createScenario from "../../func/createScenario.js";
 
 export default {
   name: "V-editor",
@@ -123,10 +175,16 @@ export default {
       tableRows: 5,
       tableCols: 6,
       updateList: [],
-      scenarios: [],
+      scenarios: []
     };
   },
   methods: {
+    async uploadAudio(event) {
+      this.selectScenario.table[this.selectedCell.key].cols[
+        this.selectedCell.key2
+      ].src = await uploadAudio(this.$fire, event.target.files[0]);
+      this.$forceUpdate();
+    },
     openQuestion(index) {
       this.selectedCell = { key: index[0], key2: index[1] };
       this.isSetCell = true;
@@ -142,6 +200,7 @@ export default {
     nextQuestion() {
       var row = this.selectedCell.key;
       var col = this.selectedCell.key2;
+      this.type = "text"
 
       if (col < this.tableColsLength - 1) {
         this.selectScenario.table[row].cols[col + 1].score =
@@ -176,11 +235,13 @@ export default {
     },
     clearAll() {
       this.selectScenario.table.forEach((line) => {
-        line.head = "";
-        line.body.forEach((cell) => {
+        line.header = "";
+        line.cols.forEach((cell) => {
           cell.question = "";
           cell.answer = "";
           cell.score = 100;
+          cell.type = "text"
+          cell.url = ""
         });
       });
       this.selectScenario.name = "";
@@ -202,16 +263,8 @@ export default {
         : (this.selectScenario = { name: "not found", table: [] });
     },
     addScenarios() {
-      var _scenarios = { id: Date.now(), name: "", table: [] };
-      for (var i = 0; i < this.tableRows; i++) {
-        var line = { id: i, header: "", cols: [] };
-        for (var j = 0; j < this.tableCols; j++) {
-          line.cols.push({ question: "", answer: "", score: 100 });
-        }
-        _scenarios.table.push(line);
-      }
-      this.selectScenario = _scenarios;
-      this.scenarios.push(_scenarios);
+      this.selectScenario = createScenario("", this.tableRows, this.tableCols);
+      this.scenarios.push(this.selectScenario);
       this.$nextTick(() => {
         this.$refs.iName.focus();
       });
@@ -259,11 +312,29 @@ option {
   background-color: #6f6e8386;
 }
 
-input {
+input[type="number"], input[type="text"] {
   background-color: initial;
   color: inherit;
   text-align: center;
   font-size: 28px;
+  margin: 10px;
+}
+input[type="file"] {
+  margin: 10px;
+}
+.input-audio {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  z-index: -1;
+  transition:.2s;
+  opacity: 0;
+  width: 100%;
+}
+.show{
+  opacity: 1;
+  z-index: 1;
 }
 
 .editor {
@@ -288,6 +359,7 @@ input {
   top: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
   width: 100%;
   height: 100%;
 }
@@ -302,6 +374,24 @@ input {
   font-size: var(--font-size-average);
   padding: 10px;
   background-color: rgba(0, 0, 0, 0.431);
+}
+.question-type {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.type-button {
+  cursor: pointer;
+  font-size: var(--font-size-average);
+  margin-left: 10px;
+  border-radius: 10px;
+  padding: 5px 15px;
+  background-color: rgba(99, 96, 116, 0.26667);
+  color: rgb(56, 50, 44);
+}
+.type-active {
+  background-color: rgba(59, 71, 63, 0.494);
+  color: rgb(255, 255, 255);
 }
 .panel {
   display: flex;
@@ -330,9 +420,9 @@ input {
   padding: 30px;
 }
 .form textarea {
-  background-color: initial;
+  background-color: rgba(216, 251, 213, 0.33);
   font-size: var(--font-size-average);
-  margin: 0 30px;
+  margin-bottom: 20px;
 }
 .table {
   display: flex;
@@ -367,15 +457,15 @@ input {
   border-radius: 10px;
   transition: 0.3s;
 }
-.form input {
-  background-color: initial;
-  font-size: var(--font-size-big);
-  text-align: center;
-  margin: 20px 0;
-}
 .control-cell button:hover {
   background-color: #2807e044;
   color: rgb(24, 21, 19);
 }
-/* end Table */
+
+.popup-enter-active, .popup-leave-active {
+  transition: opacity .2s;
+}
+.popup-enter, .popup-leave-to{
+  opacity: 0;
+}
 </style>

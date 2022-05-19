@@ -99,6 +99,7 @@ select {
   border: none;
   color: inherit;
   cursor: pointer;
+  text-align: center;
   font-size: 24px;
   min-width: 25%;
 }
