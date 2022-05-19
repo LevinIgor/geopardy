@@ -15,8 +15,8 @@
       <transition name="component-fade" mode="out-in">
         <component
           :is="view"
-          :currentProp="currentProp"
-          @event="event($event)"
+          :property="property"
+          @event="viewsController($event)"
         />
       </transition>
     </div>
@@ -58,10 +58,10 @@ export default {
     return {
       activeKey: null,
       isGetAnswer: false,
-      view: "V-table",
-      currentProp: null,
+      view: "GameViewsTable",
       commands: {},
       scenario: {},
+      index:[0,0],
     };
   },
   methods: {
@@ -79,25 +79,30 @@ export default {
           this.event({ type: "showAnswer" }))
         : (this.commands[index].score -= this.currentProp.cell.score);
     },
-    event(event) {
-      if (event.type == "showQuestion") {
-        this.currentProp = event;
-        this.view = "V-Q-text";
-      }
-      if (event.type == "showAnswer" && !this.isGetAnswer) {
-        this.view = "V-A-text";
-      }
-      if (event.type == "showTable") {
-        this.currentProp.cell.score = 0;
-        this.currentProp = this.scenario.table;
-        this.view = "V-table";
-      }
+
+    viewsController(action) {
+      console.log("viewsController", action);      
+      this.view = action.view
+    },
+  },
+  computed: {
+    property() {
+      var scenario = this.scenario;
+      var commands = this.commands.commands;
+      var index = this.index;
+      var type = "text";
+
+      return {
+        scenario,
+        commands,
+        index,
+        type,
+      };
     },
   },
   activated() {
     this.scenario = structuredClone(this.$store.state.selectScenario);
     this.commands = structuredClone(this.$store.state.commands);
-    this.currentProp = this.scenario.table;
   },
 };
 </script>

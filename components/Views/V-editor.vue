@@ -19,7 +19,7 @@
                 ].type = 'text')
             "
           >
-            Text
+            Текст
           </span>
           <span
             class="type-button"
@@ -31,7 +31,7 @@
                 ].type = 'audio')
             "
           >
-            Audio
+            Аудио
           </span>
           <span
             class="type-button"
@@ -43,7 +43,7 @@
                 ].type = 'special')
             "
           >
-            Special
+            Особый
           </span>
         </div>
         <div class="input-audio" :class="{'show':selectScenario.table[selectedCell.key].cols[selectedCell.key2].type ===  'audio'}">
@@ -270,6 +270,14 @@ export default {
       });
     },
   },
+  computed: {
+    tableRowsLength() {
+      return this.selectScenario.table.length;
+    },
+    tableColsLength() {
+      return this.selectScenario.table[this.selectedCell.key].cols.length;
+    },
+  },
   watch: {
     selectScenario() {
       this.updateList.push(this.selectScenario.id);
@@ -277,6 +285,8 @@ export default {
   },
   activated() {
     this.scenarios = structuredClone(this.$store.state.scenarios);
+    this.scenarios.length > 0 ? this.selectScenario = this.scenarios[0] : ''
+    
   },
   deactivated() {
     var _update = [...new Set(this.updateList)];
@@ -288,14 +298,6 @@ export default {
     });
 
     this.$store.commit("SET_SCENARIOS", this.scenarios);
-  },
-  computed: {
-    tableRowsLength() {
-      return this.selectScenario.table.length;
-    },
-    tableColsLength() {
-      return this.selectScenario.table[this.selectedCell.key].cols.length;
-    },
   },
 };
 </script>
