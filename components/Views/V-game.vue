@@ -16,7 +16,7 @@
         <component
           :is="view"
           :property="property"
-          @event="viewsController($event)"
+          @event="actionsController($event)"
         />
       </transition>
     </div>
@@ -26,13 +26,16 @@
         v-for="command in commands"
         :key="command.id"
         :command="command"
-        :class="{ active: command.id == activeKey }"
         @imgClick="getAnswer($event)"
         class="command"
       >
         <div
           class="popup"
-          @click.self="(activeKey = null), (isGetAnswer = false)"
+          :class="{ active: activeCommand == command.id }"
+          @click.self="
+            isGetAnswer = false;
+            activeCommand = null;
+          "
         >
           <div class="popup-content">
             <div class="popup-header">Ответ верный?</div>
@@ -56,53 +59,64 @@ export default {
   name: "V-game",
   data() {
     return {
-      activeKey: null,
       isGetAnswer: false,
       view: "GameViewsTable",
+      activeCommand: null,
+      questionIndex: [0, 0],
+      property: "",
       commands: {},
       scenario: {},
-      index:[0,0],
     };
   },
   methods: {
-    getAnswer(key) {
-      if (this.view == "V-Q-text") {
-        this.activeKey = key;
-        this.isGetAnswer = true;
+    actionsController(action) {
+      switch (action.type) {
+        case "showTable":
+          this.view = "GameViewsTable";
+          this.scenario.table[this.questionIndex[0]].cols[
+            this.questionIndex[1]
+          ].score = 0;
+          break;
+        case "showQuestion":
+          this.property = { index: action.index, table: this.scenario.table };
+          this.questionIndex = action.index;
+          this.view = "GameViewsQuestions";
+          break;
+        case "showAnswer":
+          this.isGetAnswer ? "" : (this.view = "GameViewsAnswer");
+          break;
+        default:
+          this.view = "GameViewsTable";
       }
     },
-    answerControl(isCorrect, index) {
+    getAnswer(event) {
+      if (this.view == "GameViewsQuestions") {
+        this.isGetAnswer = true;
+        this.activeCommand = event;
+      }
+    },
+    answerControl(answer, id) {
       this.isGetAnswer = false;
-      this.activeKey = null;
-      isCorrect
-        ? ((this.commands[index].score += this.currentProp.cell.score),
-          this.event({ type: "showAnswer" }))
-        : (this.commands[index].score -= this.currentProp.cell.score);
-    },
-
-    viewsController(action) {
-      console.log("viewsController", action);      
-      this.view = action.view
-    },
-  },
-  computed: {
-    property() {
-      var scenario = this.scenario;
-      var commands = this.commands.commands;
-      var index = this.index;
-      var type = "text";
-
-      return {
-        scenario,
-        commands,
-        index,
-        type,
-      };
+      this.activeCommand = null;
+      if (answer) {
+        this.commands[id].score +=
+          this.scenario.table[this.questionIndex[0]].cols[
+            this.questionIndex[1]
+          ].score;
+        this.actionsController({ type: "showAnswer" });
+      } else {
+        this.commands[id].score -=
+          this.scenario.table[this.property.index[0]].cols[
+            this.property.index[1]
+          ].score;
+      }
     },
   },
+  computed: {},
   activated() {
     this.scenario = structuredClone(this.$store.state.selectScenario);
     this.commands = structuredClone(this.$store.state.commands);
+    this.property = this.scenario;
   },
 };
 </script>
@@ -158,10 +172,6 @@ span {
 .command {
   cursor: pointer;
 }
-.active .popup {
-  opacity: 1;
-  z-index: 10;
-}
 .popup {
   position: absolute;
   display: flex;
@@ -179,6 +189,10 @@ span {
   border-radius: 10px;
   width: 100%;
   height: 100%;
+}
+.active {
+  opacity: 1;
+  z-index: 10;
 }
 .popup-header {
   font-size: 34px;

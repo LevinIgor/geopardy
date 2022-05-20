@@ -37,10 +37,12 @@
       <span
         class="panel run"
         @click="
-          $store.commit('OPEN_VIEW', {
-            view: 'ViewsV-game',
-            animDirection: 'right',
-          })
+          if (!disable) {
+            $store.commit('OPEN_VIEW', {
+              view: 'ViewsV-game',
+              animDirection: 'right',
+            });
+          }
         "
       >
         Начать</span
@@ -86,9 +88,19 @@ export default {
     commands() {
       return this.$store.state.commands;
     },
+    disable() {
+      var _disable = true;
+      this.scenarios.length > 0 ? (_disable = false) : (_disable = true);
+      return _disable;
+    },
   },
   mounted() {
     this.$store.commit("ADD_COMMANDS", this.countCommands);
+  },
+  activated() {
+    this.scenarios.length > 0
+      ? ((this.select = this.scenarios[0]), this.changeSelect())
+      : "";
   },
 };
 </script>
