@@ -17,4 +17,6 @@ $ npm run start
 $ npm run generate
 ```
 
+GitHub pages https://levinigor.github.io/geopardy/
+
 
