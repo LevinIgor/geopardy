@@ -1,105 +1,153 @@
 <template>
   <div class="editor">
-    <transition name=popup>
-       <div class="popup" v-if="isSetCell" @click.self="isSetCell = false">
-      <div class="form">
-        <span class="head">
-          {{ selectScenario.table[selectedCell.key].header }}||
-          {{ selectedCell.key2 + 1 }} из {{ tableColsLength }}</span
-        >
-        <div class="question-type">
-          <span>Тип: </span>
-          <span
-            class="type-button"
-            :class="{ 'type-active': selectScenario.table[selectedCell.key].cols[selectedCell.key2].type === 'text' }"
-            @click="
-              (type = 'text'),
-                (selectScenario.table[selectedCell.key].cols[
-                  selectedCell.key2
-                ].type = 'text')
-            "
+    <transition name="popup">
+      <div class="popup" v-if="isSetCell" @click.self="isSetCell = false">
+        <div class="form">
+          <span class="head">
+            {{ selectScenario.table[selectedCell.key].header }}||
+            {{ selectedCell.key2 + 1 }} из {{ tableColsLength }}</span
           >
-            Текст
-          </span>
-          <span
-            class="type-button"
-            :class="{ 'type-active': selectScenario.table[selectedCell.key].cols[selectedCell.key2].type == 'audio' }"
-            @click="
-              (type = 'audio'),
-                (selectScenario.table[selectedCell.key].cols[
-                  selectedCell.key2
-                ].type = 'audio')
-            "
+          <div class="question-type">
+            <span>Тип: </span>
+            <span
+              class="type-button"
+              :class="{
+                'type-active':
+                  selectScenario.table[selectedCell.key].cols[selectedCell.key2]
+                    .type === 'text',
+              }"
+              @click="
+                (type = 'text'),
+                  (selectScenario.table[selectedCell.key].cols[
+                    selectedCell.key2
+                  ].type = 'text')
+              "
+            >
+              Текст
+            </span>
+            <span
+              class="type-button"
+              :class="{
+                'type-active':
+                  selectScenario.table[selectedCell.key].cols[selectedCell.key2]
+                    .type == 'audio',
+              }"
+              @click="
+                (type = 'audio'),
+                  (selectScenario.table[selectedCell.key].cols[
+                    selectedCell.key2
+                  ].type = 'audio')
+              "
+            >
+              Аудио
+            </span>
+            <span
+              class="type-button"
+              :class="{
+                'type-active':
+                  selectScenario.table[selectedCell.key].cols[selectedCell.key2]
+                    .type === 'special',
+              }"
+              @click="
+                (type = 'special'),
+                  (selectScenario.table[selectedCell.key].cols[
+                    selectedCell.key2
+                  ].type = 'special')
+              "
+            >
+              Особый
+            </span>
+          </div>
+          <div
+            class="input-type"
+            :class="{
+              show:
+                selectScenario.table[selectedCell.key].cols[selectedCell.key2]
+                  .type === 'audio',
+            }"
           >
-            Аудио
-          </span>
-          <span
-            class="type-button"
-            :class="{ 'type-active':selectScenario.table[selectedCell.key].cols[selectedCell.key2].type === 'special'  }"
-            @click="
-              (type = 'special'),
-                (selectScenario.table[selectedCell.key].cols[
-                  selectedCell.key2
-                ].type = 'special')
-            "
+            <input
+              type="file"
+              name=""
+              id=""
+              @change="uploadFile($event)"
+              accept=".mp3"
+            />
+            <audio
+              controls
+              :src="
+                selectScenario.table[selectedCell.key].cols[selectedCell.key2]
+                  .src
+              "
+            />
+          </div>
+          <div
+            class="input-type"
+            :class="{
+              show:
+                selectScenario.table[selectedCell.key].cols[selectedCell.key2]
+                  .type === 'special',
+            }"
           >
-            Особый
-          </span>
-        </div>
-        <div class="input-audio" :class="{'show':selectScenario.table[selectedCell.key].cols[selectedCell.key2].type ===  'audio'}">
-          <input type="file" name="" id="" @change="uploadAudio($event)" accept=".mp3" />
-          <audio
-            controls
-            :src="
-              selectScenario.table[selectedCell.key].cols[selectedCell.key2].src
+            <input
+              type="file"
+              name=""
+              id=""
+              @change="uploadFile($event)"
+              accept=".png"
+            />
+            <img
+              :src="
+                selectScenario.table[selectedCell.key].cols[selectedCell.key2]
+                  .src
+              "
+            />
+          </div>
+          <textarea
+            cols="90"
+            rows="10"
+            class="inputs"
+            ref="tArea1"
+            placeholder="Вопрос:"
+            v-model="
+              selectScenario.table[selectedCell.key].cols[selectedCell.key2]
+                .question
+            "
+            @keydown.esc="$refs.tArea1.blur()"
+            @keypress.enter="$refs.tArea2.focus()"
+            @keypress.enter.prevent=""
+          />
+          <textarea
+            cols="90"
+            rows="10"
+            ref="tArea2"
+            placeholder="Ответ:"
+            class="inputs"
+            v-model="
+              selectScenario.table[selectedCell.key].cols[selectedCell.key2]
+                .answer
+            "
+            @keydown.esc="$refs.tArea2.blur()"
+            @keypress.enter="nextQuestion()"
+            @keypress.enter.prevent=""
+          />
+          <input
+            type="number"
+            class="score inputs"
+            placeholder="Очки:"
+            v-model.number="
+              selectScenario.table[selectedCell.key].cols[selectedCell.key2]
+                .score
             "
           />
-        </div>
-        <textarea
-          cols="90"
-          rows="10"
-          class="inputs"
-          ref="tArea1"
-          placeholder="Вопрос:"
-          v-model="
-            selectScenario.table[selectedCell.key].cols[selectedCell.key2]
-              .question
-          "
-          @keydown.esc="$refs.tArea1.blur()"
-          @keypress.enter="$refs.tArea2.focus()"
-          @keypress.enter.prevent=""
-        />
-        <textarea
-          cols="90"
-          rows="10"
-          ref="tArea2"
-          placeholder="Ответ:"
-          class="inputs"
-          v-model="
-            selectScenario.table[selectedCell.key].cols[selectedCell.key2]
-              .answer
-          "
-          @keydown.esc="$refs.tArea2.blur()"
-          @keypress.enter="nextQuestion()"
-          @keypress.enter.prevent=""
-        />
-        <input
-          type="number"
-          class="score inputs"
-          placeholder="Очки:"
-          v-model.number="
-            selectScenario.table[selectedCell.key].cols[selectedCell.key2].score
-          "
-        />
-        <div class="control-cell">
-          <button @click="prevQuestion()">Предыдущий</button>
-          <button @click="clear()">Очистить</button>
-          <button @click="nextQuestion()">Следующий</button>
+          <div class="control-cell">
+            <button @click="prevQuestion()">Предыдущий</button>
+            <button @click="clear()">Очистить</button>
+            <button @click="nextQuestion()">Следующий</button>
+          </div>
         </div>
       </div>
-    </div>
     </transition>
-   
 
     <div class="header">
       <div class="panel">
@@ -162,8 +210,8 @@
 <script>
 import deleteDocument from "../../backend/deleteDocument.js";
 import setDocument from "../../backend/setDocument.js";
-import uploadAudio from "../../backend/uploadAudio.js";
 import createScenario from "../../func/createScenario.js";
+import uploadFile from "../../backend/uploadFile.js";
 
 export default {
   name: "V-editor",
@@ -175,14 +223,14 @@ export default {
       tableRows: 5,
       tableCols: 6,
       updateList: [],
-      scenarios: []
+      scenarios: [],
     };
   },
   methods: {
-    async uploadAudio(event) {
+    async uploadFile(event) {
       this.selectScenario.table[this.selectedCell.key].cols[
         this.selectedCell.key2
-      ].src = await uploadAudio(this.$fire, event.target.files[0]);
+      ].src = await uploadFile(this.$fire, event.target.files[0]);
       this.$forceUpdate();
     },
     openQuestion(index) {
@@ -200,7 +248,7 @@ export default {
     nextQuestion() {
       var row = this.selectedCell.key;
       var col = this.selectedCell.key2;
-      this.type = "text"
+      this.type = "text";
 
       if (col < this.tableColsLength - 1) {
         this.selectScenario.table[row].cols[col + 1].score =
@@ -240,8 +288,8 @@ export default {
           cell.question = "";
           cell.answer = "";
           cell.score = 100;
-          cell.type = "text"
-          cell.url = ""
+          cell.type = "text";
+          cell.url = "";
         });
       });
       this.selectScenario.name = "";
@@ -285,8 +333,7 @@ export default {
   },
   activated() {
     this.scenarios = structuredClone(this.$store.state.scenarios);
-    this.scenarios.length > 0 ? this.selectScenario = this.scenarios[0] : ''
-    
+    this.scenarios.length > 0 ? (this.selectScenario = this.scenarios[0]) : "";
   },
   deactivated() {
     var _update = [...new Set(this.updateList)];
@@ -314,7 +361,8 @@ option {
   background-color: #6f6e8386;
 }
 
-input[type="number"], input[type="text"] {
+input[type="number"],
+input[type="text"] {
   background-color: initial;
   color: inherit;
   text-align: center;
@@ -324,17 +372,20 @@ input[type="number"], input[type="text"] {
 input[type="file"] {
   margin: 10px;
 }
-.input-audio {
+.input-type {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 5px;
   z-index: -1;
-  transition:.2s;
+  transition: 0.2s;
   opacity: 0;
   width: 100%;
 }
-.show{
+.input-type img{
+width: 50px;
+}
+.show {
   opacity: 1;
   z-index: 1;
 }
@@ -464,10 +515,12 @@ input[type="file"] {
   color: rgb(24, 21, 19);
 }
 
-.popup-enter-active, .popup-leave-active {
-  transition: opacity .2s;
+.popup-enter-active,
+.popup-leave-active {
+  transition: opacity 0.2s;
 }
-.popup-enter, .popup-leave-to{
+.popup-enter,
+.popup-leave-to {
   opacity: 0;
 }
 </style>

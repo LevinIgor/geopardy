@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import uploadAudio from '../backend/uploadAudio'
+import uploadAudio from '../backend/uploadFile'
 export default {
   methods: {
     click(obj) {

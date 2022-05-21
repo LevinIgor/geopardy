@@ -1,4 +1,4 @@
-export default async function uploadAudio(firebase, file) {
+export default async function uploadFile(firebase, file) {
     return new Promise((resolve) => {
         var ref = file.name + Date.now()
         firebase.storage

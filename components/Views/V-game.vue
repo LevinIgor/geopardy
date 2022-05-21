@@ -8,8 +8,8 @@
           animDirection: 'left',
         })
       "
-      >Назад</span
-    >
+      ><img src="../../static/icons/main.svg" alt=""
+    /></span>
 
     <div class="scenes">
       <transition name="component-fade" mode="out-in">
@@ -99,20 +99,24 @@ export default {
       this.isGetAnswer = false;
       this.activeCommand = null;
       if (answer) {
-        this.commands[id].score +=
-          this.scenario.table[this.questionIndex[0]].cols[
-            this.questionIndex[1]
-          ].score;
+        var score =
+          this.selectQuestion.type == "special"
+            ? 2000
+            : this.selectQuestion.score;
+        this.commands[id].score += score;
         this.actionsController({ type: "showAnswer" });
       } else {
-        this.commands[id].score -=
-          this.scenario.table[this.property.index[0]].cols[
-            this.property.index[1]
-          ].score;
+        this.commands[id].score -= this.selectQuestion.score;
       }
     },
   },
-  computed: {},
+  computed: {
+    selectQuestion() {
+      return this.scenario.table[this.questionIndex[0]].cols[
+        this.questionIndex[1]
+      ];
+    },
+  },
   activated() {
     this.scenario = structuredClone(this.$store.state.selectScenario);
     this.commands = structuredClone(this.$store.state.commands);
@@ -131,7 +135,7 @@ span {
   position: fixed;
   cursor: pointer;
   top: 10px;
-  right: 10px;
+  left: 10px;
 }
 .back:hover {
   color: rgb(184, 251, 182);

@@ -1,9 +1,11 @@
 <template>
   <div class="V-menu">
+
     <div class="header">
-      <select v-model="select" @change="changeSelect()">
+
+      <select v-model="select">
         <option
-          v-for="scenario in scenarios"
+          v-for="scenario in $store.state.scenarios"
           :key="scenario.id"
           :value="scenario"
         >
@@ -15,49 +17,34 @@
         <span>Игроков:{{ countCommands }}</span>
         <input
           type="range"
-          min="2"
-          max="6"
+          min="2" max="6"
           v-model="countCommands"
-          @change="addCommand"
+          @change="$store.commit('ADD_COMMANDS', $event.target.value)"
         />
       </div>
-      <div
-        class="panel"
-        @click="
-          $store.commit('OPEN_VIEW', {
-            view: 'ViewsV-editor',
-            animDirection: 'left',
-          })
-        "
-      >
+
+      <div class="panel" @click="$store.commit('OPEN_VIEW', {view: 'ViewsV-editor',animDirection: 'left'})">
         <img class="icon" src="../../static/icons/editor.png" alt="" />
         <span class="editor"> Редактор сценариев</span>
       </div>
 
-      <span
-        class="panel run"
-        @click="
-          if (!disable) {
-            $store.commit('OPEN_VIEW', {
-              view: 'ViewsV-game',
-              animDirection: 'right',
-            });
-          }
-        "
-      >
-        Начать</span
-      >
+      <span class="panel run" @click="$store.commit('OPEN_VIEW', {view: 'ViewsV-game',animDirection: 'right'})"> Начать </span>
+   
     </div>
+
     <div class="commands">
+
       <V-command
-        v-for="command in commands"
+        v-for="command in $store.state.commands"
         :key="command.id"
         :command="command"
         :readonly="false"
         @imgClick="$store.commit('SET_RANDOM_COMMAND_IMG', $event)"
         @randomName="$store.commit('SET_RANDOM_COMMAND_NAME', $event)"
       />
+
     </div>
+
   </div>
 </template>
 
@@ -66,41 +53,16 @@ export default {
   name: "V-menu",
   data() {
     return {
-      select: null,
+      select: "",
       countCommands: 2,
     };
   },
-  methods: {
-    addCommand() {
-      this.$store.commit("ADD_COMMANDS", this.countCommands);
-    },
-    changeSelect() {
-      this.$store.commit("SET_SELECT", this.select);
-    },
-  },
-  computed: {
-    scenarios() {
-      var s = this.$store.state.scenarios;
-      this.select == null ? (this.select = s[0]) : "";
-      this.changeSelect();
-      return s;
-    },
-    commands() {
-      return this.$store.state.commands;
-    },
-    disable() {
-      var _disable = true;
-      this.scenarios.length > 0 ? (_disable = false) : (_disable = true);
-      return _disable;
-    },
-  },
   mounted() {
     this.$store.commit("ADD_COMMANDS", this.countCommands);
+    this.select = this.$store.state.scenarios[0];
   },
-  activated() {
-    this.scenarios.length > 0
-      ? ((this.select = this.scenarios[0]), this.changeSelect())
-      : "";
+  deactivated() {
+    this.$store.commit("SET_SELECT", this.select);
   },
 };
 </script>
@@ -119,6 +81,7 @@ option {
   background-color: #6f6e8386;
 }
 input[type="range"] {
+  cursor: pointer;
   margin-left: 10px;
 }
 .V-menu {
