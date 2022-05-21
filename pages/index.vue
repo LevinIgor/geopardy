@@ -15,9 +15,9 @@
 
 <script>
 export default {
-  created() {
-    this.$store.dispatch("get_scenarios", this.$fire);
-  },
+   async asyncData({store,$fire}) {
+    await store.dispatch("get_scenarios", $fire);
+    }
 };
 </script>
 
