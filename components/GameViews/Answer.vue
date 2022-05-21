@@ -31,6 +31,7 @@ export default {
 <style scoped>
 .answer {
   display: flex;
+  text-align: center;
   justify-content: center;
   align-items: center;
   width: 100%;

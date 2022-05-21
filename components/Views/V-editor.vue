@@ -1,5 +1,7 @@
 <template>
   <div class="editor">
+
+    <!-- Попап для заполнения данных сценария -->
     <transition name="popup">
       <div class="popup" v-if="isSetCell" @click.self="isSetCell = false">
         <div class="form">
@@ -208,6 +210,7 @@
 </template>
 
 <script>
+
 import deleteDocument from "../../backend/deleteDocument.js";
 import setDocument from "../../backend/setDocument.js";
 import createScenario from "../../func/createScenario.js";
@@ -227,12 +230,16 @@ export default {
     };
   },
   methods: {
+
+    // Загрузка фото или аудио в базу данных
     async uploadFile(event) {
       this.selectScenario.table[this.selectedCell.key].cols[
         this.selectedCell.key2
       ].src = await uploadFile(this.$fire, event.target.files[0]);
       this.$forceUpdate();
     },
+
+    // Открытие попапа, и установка фокуса на поле ввода
     openQuestion(index) {
       this.selectedCell = { key: index[0], key2: index[1] };
       this.isSetCell = true;
@@ -240,11 +247,14 @@ export default {
         this.$refs.tArea1.focus();
       });
     },
+    // Переход к следующей категории
     nextCategory(key) {
       key + 1 < this.selectScenario.table.length
         ? this.$refs.table.setFocus("tableCategory" + (key + 1).toString())
         : this.openQuestion([0, 0]);
     },
+
+    // Переход к следующему вопросу
     nextQuestion() {
       var row = this.selectedCell.key;
       var col = this.selectedCell.key2;
@@ -260,6 +270,8 @@ export default {
       }
       this.$refs.tArea1.focus();
     },
+
+    // Переход к предыдущему вопросу
     prevQuestion() {
       var row = this.selectedCell.key;
       var col = this.selectedCell.key2;
@@ -271,6 +283,8 @@ export default {
         row > 0 ? this.selectedCell.key-- : "";
       }
     },
+
+    // Очистка всех полей выбраного вопроса
     clear() {
       let cell =
         this.selectScenario.table[this.selectedCell.key].cols[
@@ -281,6 +295,8 @@ export default {
       cell.answer = "";
       cell.score = 100;
     },
+
+    // Очистка всех полей всех вопросов
     clearAll() {
       this.selectScenario.table.forEach((line) => {
         line.header = "";
@@ -295,24 +311,40 @@ export default {
       this.selectScenario.name = "";
       this.$forceUpdate();
     },
+
+    // Удаление вопроса
     deleteScenarios() {
+      
+      // Если вопрос не выбран - выходим
+      if (!this.selectScenario.id) return;
+
+      // Удаляем сценарий из базы данных
       deleteDocument(this.$fire, "scenarios", this.selectScenario.id);
 
+      // Удаляем сценарий из массива
       this.scenarios = this.scenarios.filter((scenarios) => {
         return scenarios.id != this.selectScenario.id;
       });
 
+      // Удаляем сценарий из списка обновлений
       this.updateList = this.updateList.filter((id) => {
         return id != this.selectScenario.id;
       });
 
+      // Если сценарии существуют - выбираем первый, если нет выбираем пустой
       this.scenarios.length > 0
         ? (this.selectScenario = this.scenarios[0])
         : (this.selectScenario = { name: "not found", table: [] });
     },
+
+    // Создание сценария
     addScenarios() {
+
+      // Создание сценария
       this.selectScenario = createScenario("", this.tableRows, this.tableCols);
       this.scenarios.push(this.selectScenario);
+
+      // Установка фокуса на название созданого сценария
       this.$nextTick(() => {
         this.$refs.iName.focus();
       });
@@ -327,6 +359,7 @@ export default {
     },
   },
   watch: {
+    // Следим за выбраными сценариями, и записываем их в список для обновления
     selectScenario() {
       this.updateList.push(this.selectScenario.id);
     },
@@ -337,7 +370,8 @@ export default {
   },
   deactivated() {
     var _update = [...new Set(this.updateList)];
-
+    
+    // Обновляем в базе данные что были изменены
     this.scenarios.forEach((scenario) => {
       if (_update.indexOf(scenario.id) != -1) {
         setDocument(this.$fire, "scenarios", scenario);
@@ -382,8 +416,8 @@ input[type="file"] {
   opacity: 0;
   width: 100%;
 }
-.input-type img{
-width: 50px;
+.input-type img {
+  width: 50px;
 }
 .show {
   opacity: 1;

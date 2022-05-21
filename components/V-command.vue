@@ -67,7 +67,7 @@ input {
   background-color: initial;
   width: 100%;
 }
-.icon {
+.img-icon {
   cursor: pointer;
   width: 25px;
   height: 25px;

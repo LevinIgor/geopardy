@@ -31,7 +31,7 @@ export default {
     questionText() {
       return this.property.table[this.property.index[0]].cols[
         this.property.index[1]
-      ].answer;
+      ].question;
     },
     src() {
       if (this.questionType == "audio") {
@@ -57,6 +57,7 @@ export default {
   align-items: center;
   flex-direction: column;
   font-size: 44px;
+  text-align: center;
 }
 
 .question audio {

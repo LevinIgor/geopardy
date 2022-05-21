@@ -1,11 +1,14 @@
 <template>
   <div class="container">
+
+    <!-- Компоненты взяты из пути: components/Views -->
     <transition :name="this.$store.state.animDirection">
       <keep-alive>
         <component :is="this.$store.state.view" />
       </keep-alive>
     </transition>
 
+<!-- Подгрузка фото, для моментального отображения, фото используються в фото команды -->
   <div class="imgs">
     <img v-for="src in this.$store.state.randomImgs" :key="src" :src="src" alt="">
   </div>
@@ -15,6 +18,8 @@
 
 <script>
 export default {
+
+  // Получаем сценарии из базы данных
    async asyncData({store,$fire}) {
     await store.dispatch("get_scenarios", $fire);
     }
@@ -37,11 +42,11 @@ export default {
 
 .right-enter-active,
 .left-enter-active {
-  transition: 0.5s;
+  transition: .5s;
 }
 .right-leave-active,
 .left-leave-active {
-  transition: 0.6s;
+  transition: .5s;
 }
 .right-enter,
 .left-leave-to {

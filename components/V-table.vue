@@ -27,13 +27,6 @@ export default {
     table: {
       type: Array,
       require: true,
-      default: () => [
-        {
-          id: 0,
-          header: "test row head",
-          cols: [{ question: "", answer: "", score: 100 }],
-        },
-      ],
     },
     readonly: {
       type: Boolean,

@@ -12,6 +12,8 @@
     /></span>
 
     <div class="scenes">
+
+      <!-- Компоненты взяты из components/GameViews/ -->
       <transition name="component-fade" mode="out-in">
         <component
           :is="view"
@@ -72,10 +74,10 @@ export default {
     actionsController(action) {
       switch (action.type) {
         case "showTable":
-          this.view = "GameViewsTable";
           this.scenario.table[this.questionIndex[0]].cols[
             this.questionIndex[1]
           ].score = 0;
+            this.view = "GameViewsTable";
           break;
         case "showQuestion":
           this.property = { index: action.index, table: this.scenario.table };
@@ -99,10 +101,13 @@ export default {
       this.isGetAnswer = false;
       this.activeCommand = null;
       if (answer) {
+
+        // Если тип вопроса "Специальный" то цена вопроса становиться 2000, иначе она не меняеться
         var score =
           this.selectQuestion.type == "special"
             ? 2000
             : this.selectQuestion.score;
+
         this.commands[id].score += score;
         this.actionsController({ type: "showAnswer" });
       } else {
@@ -118,8 +123,20 @@ export default {
     },
   },
   activated() {
+
+    // Проверка существует ли сценарии
+    if (this.$store.state.scenarios.length == 0) {
+      this.$store.commit("OPEN_VIEW", {
+        view: "ViewsV-menu",
+        animDirection: "left",
+      });
+      return
+    }
+    
     this.scenario = structuredClone(this.$store.state.selectScenario);
     this.commands = structuredClone(this.$store.state.commands);
+    this.isGetAnswer = false;
+    this.view = "GameViewsTable";
     this.property = this.scenario;
   },
 };
@@ -154,6 +171,7 @@ span {
   align-items: center;
   width: 100%;
   height: 65%;
+  cursor: pointer;
 }
 .text {
   display: flex;

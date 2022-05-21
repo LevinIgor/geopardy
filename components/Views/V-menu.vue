@@ -17,7 +17,7 @@
         <span>Игроков:{{ countCommands }}</span>
         <input
           type="range"
-          min="2" max="6"
+          min="2" max="5"
           v-model="countCommands"
           @change="$store.commit('ADD_COMMANDS', $event.target.value)"
         />
@@ -63,7 +63,7 @@ export default {
   },
   deactivated() {
     this.$store.commit("SET_SELECT", this.select);
-  },
+  }
 };
 </script>
 <style scoped>

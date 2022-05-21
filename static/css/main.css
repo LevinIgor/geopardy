@@ -13,8 +13,7 @@ body{
 }
 input, select, textarea{
     border: none;
-    outline: none;
-    cursor: pointer;
+    outline: none
 }
 
 
