@@ -1,18 +1,6 @@
 <template>
   <div class="game">
-    <span
-      class="back"
-      @click="
-        $store.commit('OPEN_VIEW', {
-          view: 'ViewsV-menu',
-          animDirection: 'left',
-        })
-      "
-      ><img src="../../static/icons/main.svg" alt=""
-    /></span>
-
     <div class="scenes">
-
       <!-- Компоненты взяты из components/GameViews/ -->
       <transition name="component-fade" mode="out-in">
         <component
@@ -30,6 +18,7 @@
         :command="command"
         @imgClick="getAnswer($event)"
         class="command"
+        :disabled="true"
       >
         <div
           class="popup"
@@ -59,6 +48,7 @@
 <script>
 export default {
   name: "V-game",
+  props: ["commands", "select"],
   data() {
     return {
       isGetAnswer: false,
@@ -66,7 +56,6 @@ export default {
       activeCommand: null,
       questionIndex: [0, 0],
       property: "",
-      commands: {},
       scenario: {},
     };
   },
@@ -77,7 +66,7 @@ export default {
           this.scenario.table[this.questionIndex[0]].cols[
             this.questionIndex[1]
           ].score = 0;
-            this.view = "GameViewsTable";
+          this.view = "GameViewsTable";
           break;
         case "showQuestion":
           this.property = { index: action.index, table: this.scenario.table };
@@ -101,7 +90,6 @@ export default {
       this.isGetAnswer = false;
       this.activeCommand = null;
       if (answer) {
-
         // Если тип вопроса "Специальный" то цена вопроса становиться 2000, иначе она не меняеться
         var score =
           this.selectQuestion.type == "special"
@@ -122,22 +110,18 @@ export default {
       ];
     },
   },
-  activated() {
-
-    // Проверка существует ли сценарии
-    if (this.$store.state.scenarios.length == 0) {
-      this.$store.commit("OPEN_VIEW", {
-        view: "ViewsV-menu",
-        animDirection: "left",
-      });
-      return
-    }
-    
-    this.scenario = structuredClone(this.$store.state.selectScenario);
-    this.commands = structuredClone(this.$store.state.commands);
-    this.isGetAnswer = false;
-    this.view = "GameViewsTable";
+  mounted() {
+    this.scenario = this.$store.state.scenarios.find(
+      (scenario) => scenario.id == this.select
+    );
     this.property = this.scenario;
+  },
+  watch: {
+    select() {
+      this.scenario = this.$store.state.scenarios.find(
+        (scenario) => scenario.id == this.select
+      );
+    },
   },
 };
 </script>
@@ -147,20 +131,7 @@ span {
   text-align: center;
   font-size: 24px;
 }
-
-.back {
-  position: fixed;
-  cursor: pointer;
-  top: 10px;
-  left: 10px;
-}
-.back:hover {
-  color: rgb(184, 251, 182);
-}
-
 .game {
-  position: absolute;
-  width: 95%;
   height: 95vh;
 }
 
@@ -169,9 +140,8 @@ span {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 65%;
   cursor: pointer;
+  height: 80%;
 }
 .text {
   display: flex;
@@ -189,7 +159,7 @@ span {
   box-sizing: border-box;
   padding-bottom: 20px;
   width: 100%;
-  height: 35%;
+  height: 15%;
 }
 .command {
   cursor: pointer;

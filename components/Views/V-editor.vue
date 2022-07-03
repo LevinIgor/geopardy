@@ -1,12 +1,11 @@
 <template>
   <div class="editor">
-
     <!-- Попап для заполнения данных сценария -->
     <transition name="popup">
       <div class="popup" v-if="isSetCell" @click.self="isSetCell = false">
         <div class="form">
           <span class="head">
-            {{ selectScenario.table[selectedCell.key].header }}||
+            {{ Scenario.table[selectedCell.key].header }}||
             {{ selectedCell.key2 + 1 }} из {{ tableColsLength }}</span
           >
           <div class="question-type">
@@ -15,12 +14,12 @@
               class="type-button"
               :class="{
                 'type-active':
-                  selectScenario.table[selectedCell.key].cols[selectedCell.key2]
+                  Scenario.table[selectedCell.key].cols[selectedCell.key2]
                     .type === 'text',
               }"
               @click="
                 (type = 'text'),
-                  (selectScenario.table[selectedCell.key].cols[
+                  (Scenario.table[selectedCell.key].cols[
                     selectedCell.key2
                   ].type = 'text')
               "
@@ -31,12 +30,12 @@
               class="type-button"
               :class="{
                 'type-active':
-                  selectScenario.table[selectedCell.key].cols[selectedCell.key2]
+                  Scenario.table[selectedCell.key].cols[selectedCell.key2]
                     .type == 'audio',
               }"
               @click="
                 (type = 'audio'),
-                  (selectScenario.table[selectedCell.key].cols[
+                  (Scenario.table[selectedCell.key].cols[
                     selectedCell.key2
                   ].type = 'audio')
               "
@@ -47,12 +46,12 @@
               class="type-button"
               :class="{
                 'type-active':
-                  selectScenario.table[selectedCell.key].cols[selectedCell.key2]
+                  Scenario.table[selectedCell.key].cols[selectedCell.key2]
                     .type === 'special',
               }"
               @click="
                 (type = 'special'),
-                  (selectScenario.table[selectedCell.key].cols[
+                  (Scenario.table[selectedCell.key].cols[
                     selectedCell.key2
                   ].type = 'special')
               "
@@ -64,7 +63,7 @@
             class="input-type"
             :class="{
               show:
-                selectScenario.table[selectedCell.key].cols[selectedCell.key2]
+                Scenario.table[selectedCell.key].cols[selectedCell.key2]
                   .type === 'audio',
             }"
           >
@@ -78,8 +77,7 @@
             <audio
               controls
               :src="
-                selectScenario.table[selectedCell.key].cols[selectedCell.key2]
-                  .src
+                Scenario.table[selectedCell.key].cols[selectedCell.key2].src
               "
             />
           </div>
@@ -87,7 +85,7 @@
             class="input-type"
             :class="{
               show:
-                selectScenario.table[selectedCell.key].cols[selectedCell.key2]
+                Scenario.table[selectedCell.key].cols[selectedCell.key2]
                   .type === 'special',
             }"
           >
@@ -100,8 +98,7 @@
             />
             <img
               :src="
-                selectScenario.table[selectedCell.key].cols[selectedCell.key2]
-                  .src
+                Scenario.table[selectedCell.key].cols[selectedCell.key2].src
               "
             />
           </div>
@@ -112,8 +109,7 @@
             ref="tArea1"
             placeholder="Вопрос:"
             v-model="
-              selectScenario.table[selectedCell.key].cols[selectedCell.key2]
-                .question
+              Scenario.table[selectedCell.key].cols[selectedCell.key2].question
             "
             @keydown.esc="$refs.tArea1.blur()"
             @keypress.enter="$refs.tArea2.focus()"
@@ -126,8 +122,7 @@
             placeholder="Ответ:"
             class="inputs"
             v-model="
-              selectScenario.table[selectedCell.key].cols[selectedCell.key2]
-                .answer
+              Scenario.table[selectedCell.key].cols[selectedCell.key2].answer
             "
             @keydown.esc="$refs.tArea2.blur()"
             @keypress.enter="nextQuestion()"
@@ -138,8 +133,7 @@
             class="score inputs"
             placeholder="Очки:"
             v-model.number="
-              selectScenario.table[selectedCell.key].cols[selectedCell.key2]
-                .score
+              Scenario.table[selectedCell.key].cols[selectedCell.key2].score
             "
           />
           <div class="control-cell">
@@ -150,48 +144,11 @@
         </div>
       </div>
     </transition>
-
-    <div class="header">
-      <div class="panel">
-        <span> Сценарий:</span>
-        <select class="select-css" v-model="selectScenario">
-          <option
-            v-for="scenario in scenarios"
-            :key="scenario.id"
-            :value="scenario"
-          >
-            {{ scenario.name }}
-          </option>
-        </select>
-        <span class="btn" @click="clearAll()">Очистить</span>
-        <span class="btn" @click="deleteScenarios()">Удалить</span>
-      </div>
-
-      <div class="panel">
-        <input type="range" v-model="tableRows" max="10" min="2" />
-        <span>Рядков:{{ tableRows }} </span>
-        <input type="range" v-model="tableCols" max="10" min="4" />
-        <span>Столбцов:{{ tableCols }}</span>
-
-        <span class="btn" @click="addScenarios()">Создать</span>
-      </div>
-
-      <span
-        class="btn"
-        @click="
-          $store.commit('OPEN_VIEW', {
-            view: 'ViewsV-menu',
-            animDirection: 'right',
-          })
-        "
-        >Назад</span
-      >
-    </div>
     <div class="table">
       <input
         type="text"
         class="table-heading input"
-        v-model="selectScenario.name"
+        v-model="Scenario.name"
         placeholder="Название"
         maxlength="30"
         ref="iName"
@@ -199,7 +156,7 @@
       />
 
       <V-table
-        :table="selectScenario.table"
+        :table="Scenario.table"
         :readonly="false"
         @tableClick="openQuestion($event)"
         @enterPress="nextCategory($event)"
@@ -210,30 +167,24 @@
 </template>
 
 <script>
-
-import deleteDocument from "../../backend/deleteDocument.js";
-import setDocument from "../../backend/setDocument.js";
-import createScenario from "../../func/createScenario.js";
 import uploadFile from "../../backend/uploadFile.js";
+import setScenarios from "../../backend/setScenarios.js";
 
 export default {
   name: "V-editor",
+  props: ["selectId"],
   data() {
     return {
-      selectScenario: "",
       isSetCell: false,
       selectedCell: { key: 0, key2: 0 },
-      tableRows: 5,
-      tableCols: 6,
-      updateList: [],
+      Scenario: {},
       scenarios: [],
     };
   },
   methods: {
-
     // Загрузка фото или аудио в базу данных
     async uploadFile(event) {
-      this.selectScenario.table[this.selectedCell.key].cols[
+      this.Scenario.table[this.selectedCell.key].cols[
         this.selectedCell.key2
       ].src = await uploadFile(this.$fire, event.target.files[0]);
       this.$forceUpdate();
@@ -243,13 +194,10 @@ export default {
     openQuestion(index) {
       this.selectedCell = { key: index[0], key2: index[1] };
       this.isSetCell = true;
-      this.$nextTick(() => {
-        this.$refs.tArea1.focus();
-      });
     },
     // Переход к следующей категории
     nextCategory(key) {
-      key + 1 < this.selectScenario.table.length
+      key + 1 < this.Scenario.table.length
         ? this.$refs.table.setFocus("tableCategory" + (key + 1).toString())
         : this.openQuestion([0, 0]);
     },
@@ -258,11 +206,10 @@ export default {
     nextQuestion() {
       var row = this.selectedCell.key;
       var col = this.selectedCell.key2;
-      this.type = "text";
 
       if (col < this.tableColsLength - 1) {
-        this.selectScenario.table[row].cols[col + 1].score =
-          this.selectScenario.table[row].cols[col].score + 200;
+        this.Scenario.table[row].cols[col + 1].score =
+          this.Scenario.table[row].cols[col].score + 200;
         this.selectedCell.key2++;
       } else {
         this.selectedCell.key2 = 0;
@@ -283,118 +230,44 @@ export default {
         row > 0 ? this.selectedCell.key-- : "";
       }
     },
-
-    // Очистка всех полей выбраного вопроса
-    clear() {
-      let cell =
-        this.selectScenario.table[this.selectedCell.key].cols[
-          this.selectedCell.key2
-        ];
-
-      cell.question = "";
-      cell.answer = "";
-      cell.score = 100;
+    setScenario(id) {
+      this.scenarios = JSON.parse(JSON.stringify(this.$store.state.scenarios));
+      this.Scenario = this.scenarios.find((scenario) => scenario.id == id);
     },
-
-    // Очистка всех полей всех вопросов
-    clearAll() {
-      this.selectScenario.table.forEach((line) => {
-        line.header = "";
-        line.cols.forEach((cell) => {
-          cell.question = "";
-          cell.answer = "";
-          cell.score = 100;
-          cell.type = "text";
-          cell.url = "";
-        });
-      });
-      this.selectScenario.name = "";
-      this.$forceUpdate();
-    },
-
-    // Удаление вопроса
-    deleteScenarios() {
-      
-      // Если вопрос не выбран - выходим
-      if (!this.selectScenario.id) return;
-
-      // Удаляем сценарий из базы данных
-      deleteDocument(this.$fire, "scenarios", this.selectScenario.id);
-
-      // Удаляем сценарий из массива
-      this.scenarios = this.scenarios.filter((scenarios) => {
-        return scenarios.id != this.selectScenario.id;
-      });
-
-      // Удаляем сценарий из списка обновлений
-      this.updateList = this.updateList.filter((id) => {
-        return id != this.selectScenario.id;
-      });
-
-      // Если сценарии существуют - выбираем первый, если нет выбираем пустой
-      this.scenarios.length > 0
-        ? (this.selectScenario = this.scenarios[0])
-        : (this.selectScenario = { name: "not found", table: [] });
-    },
-
-    // Создание сценария
-    addScenarios() {
-
-      // Создание сценария
-      this.selectScenario = createScenario("", this.tableRows, this.tableCols);
-      this.scenarios.push(this.selectScenario);
-
-      // Установка фокуса на название созданого сценария
-      this.$nextTick(() => {
-        this.$refs.iName.focus();
-      });
+    deleteScenario() {
+      this.scenarios = this.scenarios.filter(
+        (scenario) => scenario.id != this.Scenario.id
+      );
     },
   },
   computed: {
     tableRowsLength() {
-      return this.selectScenario.table.length;
+      return this.Scenario.table.length;
     },
     tableColsLength() {
-      return this.selectScenario.table[this.selectedCell.key].cols.length;
+      return this.Scenario.table[this.selectedCell.key].cols.length;
     },
   },
   watch: {
-    // Следим за выбраными сценариями, и записываем их в список для обновления
-    selectScenario() {
-      this.updateList.push(this.selectScenario.id);
+    selectId: {
+      handler(newVal) {
+        this.setScenario(newVal);
+      },
+      deep: true,
     },
   },
-  activated() {
-    this.scenarios = structuredClone(this.$store.state.scenarios);
-    this.scenarios.length > 0 ? (this.selectScenario = this.scenarios[0]) : "";
+  mounted() {
+    this.setScenario(this.selectId);
   },
-  deactivated() {
-    var _update = [...new Set(this.updateList)];
-    
-    // Обновляем в базе данные что были изменены
-    this.scenarios.forEach((scenario) => {
-      if (_update.indexOf(scenario.id) != -1) {
-        setDocument(this.$fire, "scenarios", scenario);
-      }
-    });
 
+  beforeDestroy() {
     this.$store.commit("SET_SCENARIOS", this.scenarios);
+    setScenarios(this.$fire, this.scenarios);
   },
 };
 </script>
 
 <style scoped>
-select {
-  background-color: initial;
-  color: inherit;
-  text-align: center;
-  font-size: 24px;
-  min-width: 200px;
-}
-option {
-  background-color: #6f6e8386;
-}
-
 input[type="number"],
 input[type="text"] {
   background-color: initial;
@@ -429,12 +302,8 @@ input[type="file"] {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #ffffff48;
   overflow: hidden;
   border-radius: 10px;
-  width: 95%;
-  height: 95%;
-  max-width: 2400px;
 }
 .popup {
   position: absolute;
@@ -451,17 +320,6 @@ input[type="file"] {
   height: 100%;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-sizing: border-box;
-  width: 100%;
-  height: 7%;
-  font-size: var(--font-size-average);
-  padding: 10px;
-  background-color: rgba(0, 0, 0, 0.431);
-}
 .question-type {
   display: flex;
   align-items: center;
@@ -480,14 +338,7 @@ input[type="file"] {
   background-color: rgba(59, 71, 63, 0.494);
   color: rgb(255, 255, 255);
 }
-.panel {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  height: 30px;
-  background-color: #ffffff2f;
-  border-radius: 10px;
-}
+
 .btn {
   cursor: pointer;
   margin-left: 20px;
@@ -512,11 +363,13 @@ input[type="file"] {
   margin-bottom: 20px;
 }
 .table {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
+  box-sizing: border-box;
   width: 100%;
-  height: 95%;
+  height: 90vh;
+}
+.table input {
+  margin: 0 auto;
+  width: 100%;
 }
 .line {
   display: flex;

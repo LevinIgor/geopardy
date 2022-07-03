@@ -7,6 +7,7 @@ body{
     overflow: hidden;
     user-select: none;
     margin: 0;
+    height: 100vh;
 	animation: gradient 10s ease infinite;
     background: linear-gradient(-45deg, #f72585, #7209b7, #3f37c9, #4cf04c);
 	background-size: 400% 400%;
@@ -40,5 +41,6 @@ input, select, textarea{
     --color-form-secondary:#A1B57D;
     --color-background-table:#212f45b2;
     --color-background-cell-hover:#2f3c4f;
+    --color-font-main:#f7f7f7;
     
   }

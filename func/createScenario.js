@@ -1,6 +1,6 @@
-export default function createScenario(name, rows, cols) {
+export default function createScenario(rows, cols) {
   var scenario = {
-    name: name,
+    name: '',
     id: Date.now(),
     table: [],
   };
@@ -11,7 +11,7 @@ export default function createScenario(name, rows, cols) {
       row.cols.push({ type: "text", question: "", answer: "", score: 100, src:'' });
     }
     scenario.table.push(row);
+   
   }
-
   return scenario;
 }

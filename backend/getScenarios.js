@@ -1,8 +1,8 @@
-export default async function getCollection(firebase, collection) {
+export default async function getScenarios(firebase) {
   return new Promise((resolve, reject) => {
     let scenarios = [];
     firebase.firestore
-      .collection(collection)
+      .collection('scenarios')
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {

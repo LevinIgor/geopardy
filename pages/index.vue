@@ -7,12 +7,6 @@
         <component :is="this.$store.state.view" />
       </keep-alive>
     </transition>
-
-<!-- Подгрузка фото, для моментального отображения, фото используються в фото команды -->
-  <div class="imgs">
-    <img v-for="src in this.$store.state.randomImgs" :key="src" :src="src" alt="">
-  </div>
-
   </div>
 </template>
 

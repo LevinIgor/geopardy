@@ -1,102 +1,43 @@
 <template>
   <div class="command">
-    <slot></slot>
-    <div class="img" @click="$emit('imgClick',command.id)">
-      <img :src="command.img" alt="" />
-    </div>
-    <div class="name">
-      <input
-        type="text"
-        placeholder="Название"
-        ref="name"
-        :value="command.name"
-        :readonly="readonly"
-        @keyup.enter="$refs['name'].blur()"
-        @input="
-          $store.commit('SET_COMMAND_NAME', {
-            key: command.id,
-            name: $event.target.value,
-          })
-        "
-      />
-      <div class="img-icon" @click="$emit('randomName',command.id)">
-        <img src="../static/icons/random.png" alt="" class="icon" v-if="!readonly"/>
-      </div>
-    </div>
-    <span class="score" v-if="readonly">{{ command.score }}</span>
+    <span>{{ command.score }}</span>
+    <input type="text" v-model="command.name" :disabled="disabled" placeholder="Введите имя " />
   </div>
 </template>
-
 <script>
 export default {
-  props: {
-    command: {
-      type: Object,
-      require: true,
-      default: () => ({
-        id: 0,
-        img: "",
-        name: "testName",
-        score: 100,
-      }),
+  props: ["disabled","command"],
+  data() {
+    return {
+      name: "jjjjjjj",
+      score: 0,
+    };
+  },
+  methods: {
+    addScore(value) {
+      this.score+=value;
     },
-    readonly:{
-      type: Boolean,
-      default: true,
-    },
-
   },
 };
 </script>
-
 <style scoped>
-* {
-  margin: 0;
-  padding: 0;
-}
-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  pointer-events: none;
-}
-span,
-input {
-  text-align: center;
-  color: white;
-  background-color: initial;
-  width: 100%;
-}
-.img-icon {
-  cursor: pointer;
-  width: 25px;
-  height: 25px;
-}
 .command {
-  position: relative;
+  padding: 40px 20px;
+  background-color: rgba(207, 241, 250, 0.589);
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-  background-color: rgba(207, 241, 250, 0.589);
-  border-radius: 10px;
-  padding: 20px;
-  height: 300px;
-  width: 250px;
-}
-.img{
-  height: 200px;
-}
-
-.name {
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-
-  margin-top: 10px;
+  border-radius: 10px;
 }
-.name input {
-  font-size: 32px;
+span{
+    font-size: 44px;
 }
-.score {
-  font-size: 28px;
+input{
+    font-size: 30px;
+    text-align: center;
+    margin-top: 40px;
+    background-color: initial;
+    color: var(--color-font-main);
 }
 </style>

@@ -2,6 +2,7 @@
   <div class="table">
     <div class="row" v-for="row in table" :key="row.id">
       <input
+        :class="{'pointer' : readonly}"
         type="text"
         placeholder="Категория"
         v-model="row.header"
@@ -33,11 +34,6 @@ export default {
       default: true,
     },
   },
-  methods: {
-    setFocus(element) {
-      this.$refs[element][0].focus();
-    },
-  },
 };
 </script>
 
@@ -46,12 +42,15 @@ input,
 span {
   resize: none;
   text-align: center;
-  color: white;
   background-color: initial;
+}
+.pointer{
+  cursor: pointer;
 }
 .table {
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
   width: 100%;
   height: 100%;
 }
