@@ -8,100 +8,6 @@
             {{ Scenario.table[selectedCell.key].header }}||
             {{ selectedCell.key2 + 1 }} из {{ tableColsLength }}</span
           >
-          <div class="question-type">
-            <span>Тип: </span>
-            <span
-              class="type-button"
-              :class="{
-                'type-active':
-                  Scenario.table[selectedCell.key].cols[selectedCell.key2]
-                    .type === 'text',
-              }"
-              @click="
-                (type = 'text'),
-                  (Scenario.table[selectedCell.key].cols[
-                    selectedCell.key2
-                  ].type = 'text')
-              "
-            >
-              Текст
-            </span>
-            <span
-              class="type-button"
-              :class="{
-                'type-active':
-                  Scenario.table[selectedCell.key].cols[selectedCell.key2]
-                    .type == 'audio',
-              }"
-              @click="
-                (type = 'audio'),
-                  (Scenario.table[selectedCell.key].cols[
-                    selectedCell.key2
-                  ].type = 'audio')
-              "
-            >
-              Аудио
-            </span>
-            <span
-              class="type-button"
-              :class="{
-                'type-active':
-                  Scenario.table[selectedCell.key].cols[selectedCell.key2]
-                    .type === 'special',
-              }"
-              @click="
-                (type = 'special'),
-                  (Scenario.table[selectedCell.key].cols[
-                    selectedCell.key2
-                  ].type = 'special')
-              "
-            >
-              Особый
-            </span>
-          </div>
-          <div
-            class="input-type"
-            :class="{
-              show:
-                Scenario.table[selectedCell.key].cols[selectedCell.key2]
-                  .type === 'audio',
-            }"
-          >
-            <input
-              type="file"
-              name=""
-              id=""
-              @change="uploadFile($event)"
-              accept=".mp3"
-            />
-            <audio
-              controls
-              :src="
-                Scenario.table[selectedCell.key].cols[selectedCell.key2].src
-              "
-            />
-          </div>
-          <div
-            class="input-type"
-            :class="{
-              show:
-                Scenario.table[selectedCell.key].cols[selectedCell.key2]
-                  .type === 'special',
-            }"
-          >
-            <input
-              type="file"
-              name=""
-              id=""
-              @change="uploadFile($event)"
-              accept=".png"
-            />
-            <img
-              :src="
-                Scenario.table[selectedCell.key].cols[selectedCell.key2].src
-              "
-            />
-          </div>
           <textarea
             cols="90"
             rows="10"
@@ -138,7 +44,6 @@
           />
           <div class="control-cell">
             <button @click="prevQuestion()">Предыдущий</button>
-            <button @click="clear()">Очистить</button>
             <button @click="nextQuestion()">Следующий</button>
           </div>
         </div>
@@ -152,14 +57,12 @@
         placeholder="Название"
         maxlength="30"
         ref="iName"
-        @keypress.enter="$refs.table.setFocus('tableCategory0')"
       />
 
       <V-table
         :table="Scenario.table"
         :readonly="false"
         @tableClick="openQuestion($event)"
-        @enterPress="nextCategory($event)"
         ref="table"
       />
     </div>
@@ -247,6 +150,21 @@ export default {
     tableColsLength() {
       return this.Scenario.table[this.selectedCell.key].cols.length;
     },
+    answer() {
+      return this.Scenario.table[this.selectedCell.key].cols[
+        this.selectedCell.key2
+      ].answer;
+    },
+    question() {
+      return this.Scenario.table[this.selectedCell.key].cols[
+        this.selectedCell.key2
+      ].question;
+    },
+    type() {
+      return this.Scenario.table[this.selectedCell.key].cols[
+        this.selectedCell.key2
+      ].type;
+    },
   },
   watch: {
     selectId: {
@@ -257,7 +175,9 @@ export default {
     },
   },
   mounted() {
-    this.setScenario(this.selectId);
+    if(this.selectId) {
+      this.setScenario(this.selectId);
+    }
   },
 
   beforeDestroy() {

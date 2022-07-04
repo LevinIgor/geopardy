@@ -1,46 +1,63 @@
 <template>
   <div class="game">
     <div class="scenes">
-      <!-- Компоненты взяты из components/GameViews/ -->
-      <transition name="component-fade" mode="out-in">
-        <component
-          :is="view"
-          :property="property"
-          @event="actionsController($event)"
-        />
-      </transition>
+      <V-table
+        ref="table"
+        :table="scenario.table"
+        @tableClick="showQuestion($event)"
+        v-if="mode == 'table'"
+        key="table"
+      />
+
+      <span
+        key="question"
+        v-if="mode == 'question'"
+        @click="changeMode('answer')"
+        class="game-text"
+        >Вопрос: {{ question }}</span
+      >
+      <span
+        key="answer"
+        v-if="mode == 'answer'"
+        @click="changeMode('table')"
+        class="game-text"
+      >
+        Ответ: {{ answer }}</span
+      >
     </div>
 
     <div class="commands">
-      <V-command
+      <div
+        class="command"
         v-for="command in commands"
         :key="command.id"
-        :command="command"
-        @imgClick="getAnswer($event)"
-        class="command"
-        :disabled="true"
+        @click="getAnswer(command.id)"
       >
+        <V-command
+          :command="command"
+          :disabled="disabled"
+          :ref="'command' + command.id"
+        />
         <div
-          class="popup"
-          :class="{ active: activeCommand == command.id }"
-          @click.self="
-            isGetAnswer = false;
-            activeCommand = null;
-          "
+          class="command-popup"
+          v-if="activeCommand == command.id"
+          @click.stop="resetActive()"
         >
-          <div class="popup-content">
-            <div class="popup-header">Ответ верный?</div>
-            <div class="popup-control">
-              <button class="yes" @click="answerControl(true, command.id)">
-                Да
-              </button>
-              <button class="no" @click="answerControl(false, command.id)">
-                Нет
-              </button>
-            </div>
+          <span class="popup-title">Ответ был верным?</span>
+          <div class="popup-btns">
+            <span
+              class="popup-btn correct"
+              @click.stop="answerCorrect(true, command.id)"
+              >Да</span
+            >
+            <span
+              class="popup-btn incorrect"
+              @click.stop="answerCorrect(false, command.id)"
+              >Нет</span
+            >
           </div>
-        </div></V-command
-      >
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -51,86 +68,85 @@ export default {
   props: ["commands", "select"],
   data() {
     return {
-      isGetAnswer: false,
-      view: "GameViewsTable",
       activeCommand: null,
       questionIndex: [0, 0],
-      property: "",
-      scenario: {},
+      currentIndex: [0, 0],
+      mode: "table",
+      disabled: true,
+      scenario: [],
     };
   },
   methods: {
-    actionsController(action) {
-      switch (action.type) {
-        case "showTable":
-          this.scenario.table[this.questionIndex[0]].cols[
-            this.questionIndex[1]
-          ].score = 0;
-          this.view = "GameViewsTable";
-          break;
-        case "showQuestion":
-          this.property = { index: action.index, table: this.scenario.table };
-          this.questionIndex = action.index;
-          this.view = "GameViewsQuestions";
-          break;
-        case "showAnswer":
-          this.isGetAnswer ? "" : (this.view = "GameViewsAnswer");
-          break;
-        default:
-          this.view = "GameViewsTable";
+    showQuestion(event) {
+      this.currentIndex = event;
+      if (this.score != 0) {
+        this.changeMode("question");
       }
     },
-    getAnswer(event) {
-      if (this.view == "GameViewsQuestions") {
-        this.isGetAnswer = true;
-        this.activeCommand = event;
+    changeMode(mode) {
+      if (mode == "table") {
+        this.scenario.table[this.currentIndex[0]].cols[
+          this.currentIndex[1]
+        ].score = 0;
+      }
+      this.mode = mode;
+    },
+    getAnswer(id) {
+      if (this.mode == "question") {
+        this.activeCommand = id;
       }
     },
-    answerControl(answer, id) {
-      this.isGetAnswer = false;
-      this.activeCommand = null;
-      if (answer) {
-        // Если тип вопроса "Специальный" то цена вопроса становиться 2000, иначе она не меняеться
-        var score =
-          this.selectQuestion.type == "special"
-            ? 2000
-            : this.selectQuestion.score;
-
-        this.commands[id].score += score;
-        this.actionsController({ type: "showAnswer" });
+    answerCorrect(isCorrect, id) {
+      if (isCorrect) {
+        this.activeCommand = null;
+        this.changeMode("answer");
+        this.$refs["command" + id.toString()][0].addScore(this.score);
       } else {
-        this.commands[id].score -= this.selectQuestion.score;
+        this.activeCommand = null;
+        this.$refs["command" + id.toString()][0].addScore(-this.score / 2);
       }
     },
+    resetActive() {
+      console.log("resetActive");
+      this.activeCommand = null;
+    },
+    setScenario(id){
+      this.scenario = structuredClone(
+        this.$store.state.scenarios.find((item) => item.id == id)
+      );
+    }
   },
   computed: {
-    selectQuestion() {
-      return this.scenario.table[this.questionIndex[0]].cols[
-        this.questionIndex[1]
-      ];
+    answer() {
+      return this.scenario.table[this.currentIndex[0]].cols[
+        this.currentIndex[1]
+      ].answer;
+    },
+    question() {
+      return this.scenario.table[this.currentIndex[0]].cols[
+        this.currentIndex[1]
+      ].question;
+    },
+    score() {
+      return this.scenario.table[this.currentIndex[0]].cols[
+        this.currentIndex[1]
+      ].score;
+    },
+  },
+  watch: {
+    select(newVal) {
+      this.setScenario(newVal)
     },
   },
   mounted() {
-    this.scenario = this.$store.state.scenarios.find(
-      (scenario) => scenario.id == this.select
-    );
-    this.property = this.scenario;
-  },
-  watch: {
-    select() {
-      this.scenario = this.$store.state.scenarios.find(
-        (scenario) => scenario.id == this.select
-      );
-    },
+    if(this.select) {
+      this.setScenario(this.select)
+    }
   },
 };
 </script>
 
 <style scoped>
-span {
-  text-align: center;
-  font-size: 24px;
-}
 .game {
   height: 95vh;
 }
@@ -140,8 +156,7 @@ span {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
-  height: 80%;
+  height: 80vh;
 }
 .text {
   display: flex;
@@ -154,68 +169,58 @@ span {
 }
 .commands {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: space-around;
   box-sizing: border-box;
-  padding-bottom: 20px;
   width: 100%;
-  height: 15%;
+  height: 19vh;
 }
 .command {
   cursor: pointer;
-}
-.popup {
-  position: absolute;
-  display: flex;
-  backdrop-filter: blur(3px);
-  background-color: #ffffff48;
+  position: relative;
   overflow: hidden;
-  justify-content: center;
-  align-items: center;
-  z-index: -1;
-  transition: 0.2s;
-  background-color: rgba(0, 0, 0, 0.488);
-  opacity: 0;
+  border-radius: 10px;
+}
+.game-text {
+  font-size: 90px;
+  padding: 200px 300px;
+  background-color: rgba(240, 248, 255, 0.049);
+  cursor: pointer;
+}
+.command-popup {
+  position: absolute;
   top: 0;
   left: 0;
-  border-radius: 10px;
   width: 100%;
   height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 1;
 }
-.active {
-  opacity: 1;
-  z-index: 10;
+.popup-title {
+  font-size: 30px;
+  color: white;
 }
-.popup-header {
-  font-size: 34px;
-}
-.popup-control {
+.popup-btns {
   display: flex;
   justify-content: space-around;
-  margin-top: 20px;
   width: 100%;
+  margin-top: 20px;
 }
-.popup-control button {
-  cursor: pointer;
-  border: none;
-  color: white;
-  transition: 0.2s;
+.popup-btn {
+  padding: 10px 40px;
+  background-color: rgba(240, 248, 255, 0.105);
   border-radius: 10px;
-  width: 90px;
-  height: 50px;
-  font-size: 22px;
+  transition: all 0.3s;
+}
+.popup-btn:hover {
+  background-color: rgba(240, 248, 255, 0.136);
+  color: white;
 }
 
-.popup-control button:hover {
-  background-color: rgb(56, 67, 138);
-  transform: scale(1.02);
-}
-.yes {
-  background-color: rgb(37, 130, 99);
-}
-.no {
-  background-color: rgb(138, 32, 32);
-}
 .component-fade-enter-active {
   transition: 0.2s ease;
 }

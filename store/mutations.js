@@ -2,11 +2,6 @@ import createScenario from "~/func/createScenario";
 import deleteScenario from "~/backend/deleteScenario";
 
 export default {
-
-  SET_SELECT(state, scenario) {
-    state.selectScenario = scenario;
-  },
-
   SET_SCENARIOS(state, scenarios) {
     state.scenarios = scenarios;
   },

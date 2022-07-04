@@ -2,7 +2,7 @@
   <div class="table">
     <div class="row" v-for="row in table" :key="row.id">
       <input
-        :class="{'pointer' : readonly}"
+        :class="{ pointer: readonly }"
         type="text"
         placeholder="Категория"
         v-model="row.header"
@@ -15,7 +15,7 @@
         class="column"
         v-for="(column, index) in row.cols"
         :key="index"
-        @click="$emit('tableClick',  [row.id, index])"
+        @click="$emit('tableClick', [row.id, index])"
         >{{ column.score }}</span
       >
     </div>
@@ -44,7 +44,7 @@ span {
   text-align: center;
   background-color: initial;
 }
-.pointer{
+.pointer {
   cursor: pointer;
 }
 .table {
@@ -67,6 +67,7 @@ span {
 .row-header {
   min-width: max-content;
   text-align: center;
+  color: var(--color-font-main);
   font-size: 44px;
 }
 
@@ -76,7 +77,7 @@ span {
   align-items: center;
   cursor: pointer;
   transition: 0.2s;
-  font-size: 25px;
+  font-size: 50px;
   border-radius: 10px;
   width: 10%;
   height: 70%;

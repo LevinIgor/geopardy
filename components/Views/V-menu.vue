@@ -1,7 +1,7 @@
 <template>
   <div class="V-menu">
     <div class="commands">
-      <V-command v-for="command in commands" :key="command.id" :command="command"/>
+      <V-command v-for="command in commands" :key="command.id" :command="command" @setRandomName="$emit('setRandomName', $event)" />
       </div>
     </div>
   </div>
