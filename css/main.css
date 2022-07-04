@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+
+body{
+    color:var(--color-main-font) ;
+    font-family: 'Roboto', sans-serif;
+    overflow: hidden;
+    user-select: none;
+    margin: 0;
+    height: 100vh;
+	animation: gradient 10s ease infinite;
+    background: linear-gradient(-45deg, #f72585, #7209b7, #3f37c9, #4cf04c);
+	background-size: 400% 400%;
+}
+input, select, textarea{
+    border: none;
+    outline: none
+}
+
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+
+:root {
+    --main:#006466;
+    --font-size-big: 2.5rem;
+    --font-size-average: 1rem;
+    --font-size-small: .7rem;
+    --color-main-font:white;
+    --color-form-main:#adadad;
+    --color-form-secondary:#A1B57D;
+    --color-background-table:#212f45b2;
+    --color-background-cell-hover:#2f3c4f;
+    --color-font-main:#f7f7f7;
+    
+  }
